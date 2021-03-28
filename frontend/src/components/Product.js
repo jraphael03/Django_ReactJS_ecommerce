@@ -1,20 +1,21 @@
 import React from 'react'
 import { Card } from 'react-bootstrap'
 import Rating from './Rating'
+import { Link } from 'react-router-dom'
 
 function Product({ product }) {     // Destructure so we don't need to use props
     return (
       <Card className="my-3 p-3 rounded">
-        <a href={`/products/${product._id}`}>
+        <Link to={`/product/${product._id}`}>
           <Card.Img src={product.image} />
-        </a>
+        </Link>
 
         <Card.Body>
-          <a href={`/products/${product._id}`}>
+          <Link to={`/product/${product._id}`}>
             <Card.Title as="div" >
                 <strong>{product.name}</strong>
             </Card.Title>
-          </a>
+          </Link>
 
           <Card.Text as="div" >
             <div className="my3">
