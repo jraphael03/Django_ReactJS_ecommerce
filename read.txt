@@ -3,7 +3,7 @@ mkdir ecommerce
 cd ecommerce
 npx create-react-app frontend
 downloaded bootstrap theme from bootswatch.com
-npm install react-bootstrap
+npm install react-bootstrap         [react bootstrap]
 
 
 BACKEND
