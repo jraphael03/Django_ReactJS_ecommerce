@@ -1,14 +1,23 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { Row, Col, Image, ListGroup, Button, Card, ListGroupItem } from 'react-bootstrap'
+import axios from 'axios' 
 
 import Rating from '../components/Rating'
-import products from '../products'
 
-function ProductScreen({ match }) {
-  // Pass in match so we don't have to pass in props
+function ProductScreen({ match }) {     // Pass in match so we don't have to pass in props
 
-  const product = products.find((p) => p._id === match.params.id); // P finds and matches id then pulls the parameters of the id from products array
+  const [product, setProduct] = useState([])
+
+  useEffect(() => {     // Explanation of this function in HomeScreen
+    async function fetchProduct(){
+      const { data } = await axios.get(`/api/products/${match.params.id}`)
+      setProduct(data)
+    }
+
+    fetchProduct()
+
+  }, [])
 
   return (
     <div>
@@ -91,3 +100,9 @@ function ProductScreen({ match }) {
 }
 
 export default ProductScreen
+
+
+
+
+// Used with products.js while developing frontend
+// const product = products.find((p) => p._id === match.params.id); // P finds and matches id then pulls the parameters of the id from products array

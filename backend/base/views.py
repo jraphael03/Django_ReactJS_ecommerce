@@ -23,12 +23,12 @@ def getRoutes(request):
     return Response(routes)
 
 
-# GET PRODUCTS FROM PRODUCTS.PY FILE
+# GET PRODUCTS FROM PRODUCTS.PY FILE   [#http://127.0.0.1:8000/api/products/]
 @api_view(['GET'])
 def getProducts(request):
     return Response(products)
 
-# GET PRODUCT BY ID
+# GET PRODUCT BY ID        [#http://127.0.0.1:8000/api/products/id]
 @api_view(['GET'])
 def getProduct(request, pk):
     product = None

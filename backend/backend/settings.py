@@ -26,13 +26,17 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
-    'rest_framework',
+    'rest_framework',       # installed
+    'corsheaders',          # installed
 
     'base.apps.BaseConfig',
 
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',     # added for corsheaders   
+
+
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -111,3 +115,6 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
 
 STATIC_URL = '/static/'
+
+# Cors header will allow any request only safe while developing
+CORS_ALLOW_ALL_ORIGINS = True
