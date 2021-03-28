@@ -9,5 +9,16 @@ npm install react-router-bootstrap
 
 
 BACKEND
+cd ecommerce
+pip3 install virtualenv
+virtualenv myenv
+myenv/scripts/activate      (for windows)
+source myenv/bin/activate   (for mac)
+pip3 install django
+django-admin.py startproject backend
+cd backend
+python3 manage.py runserver
 
+python3 manage.py startapp base
+pip3 install djangorestframework
 
