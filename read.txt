@@ -28,6 +28,8 @@ pip3 install djangorestframework            [https://www.django-rest-framework.o
 pip install django-cors-headers             [https://pypi.org/project/django-cors-headers/]
 pip install pillow     [ image processing library used for models ]
 
+# Check you JSON web token  https://jwt.io/
+pip install djangorestframework-simplejwt       #JSON web token download for djangorestframework (https://django-rest-framework-simplejwt.readthedocs.io/en/latest/)
 
 
 python manage.py createsuperuser

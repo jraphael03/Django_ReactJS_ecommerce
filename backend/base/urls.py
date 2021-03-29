@@ -1,8 +1,14 @@
 from django.urls import path
 from . import views
+from rest_framework_simplejwt.views import (
+    TokenObtainPairView,
+    #TokenRefreshView,
+)
 
 
 urlpatterns = [
+    path('users/login/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
+    #path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('', views.getRoutes, name="routes"),                   #http://127.0.0.1:8000
     path('products/', views.getProducts, name="products"),      #http://127.0.0.1:8000/api/products/
     path('products/<str:pk>/', views.getProduct, name="product"),      #http://127.0.0.1:8000/api/products/id
