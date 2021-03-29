@@ -1,4 +1,4 @@
-import { CART_ADD_ITEM } from '../constants/cartConstants'
+import { CART_ADD_ITEM, CART_REMOVE_ITEM } from '../constants/cartConstants'
 
 
 
@@ -22,6 +22,12 @@ export const cartReducer = (state= { cartItems: []}, action) => {
                     ...state,
                     cartItems:[...state.cartItems, item]    // Returns original state and cartItems, then adds new item
                 }
+            }
+
+        case CART_REMOVE_ITEM:
+            return{
+                ...state,
+                cartItems: state.cartItems.filter(x => x.product !== action.payload)        // product = id,  everything that doesn't match id will not be deleted,    will display new array using actions
             }
 
         default: 

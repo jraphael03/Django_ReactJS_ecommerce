@@ -1,7 +1,8 @@
 import axios from 'axios'
-import { CART_ADD_ITEM } from '../constants/cartConstants'
+import { CART_ADD_ITEM, CART_REMOVE_ITEM } from '../constants/cartConstants'
 
 
+// ADD ITEM TO CART
 export const addToCart = (id, qty) => async (dispatch, getState) => {       // function inside of function made it async, getState let's us get any part of the state
     // Grab the data of the item we selected by it's id
     const { data } = await axios.get(`/api/products/${id}`)
@@ -19,7 +20,14 @@ export const addToCart = (id, qty) => async (dispatch, getState) => {       // f
     })
     // use to keep info saved 
     localStorage.setItem('cartItems', JSON.stringify(getState().cart.cartItems))        // Grabbing cart from store.js, cart also has cartItems
-    
-
 }
 
+// Remove item from cart
+export const removeFromCart = (id) => (dispatch, getState) => {
+    dispatch({
+        type: CART_REMOVE_ITEM,
+        payload: id,    // when this is dispatch item with matching id will be removed
+    })
+
+    localStorage.setItem('cartItems', JSON.stringify(getState().cart.cartItems))        // This action is used in cartScreen
+}
