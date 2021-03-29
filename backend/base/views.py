@@ -7,6 +7,25 @@ from .models import Product
 from .products import products
 from .serializers import ProductSerializer
 
+# FOR JSON WEBTOKENS (CUSTOMIZING)
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+from rest_framework_simplejwt.views import TokenObtainPairView
+
+class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
+    def validate(self, attrs):
+        data = super().validate(attrs)
+
+        # data we want to retrieve with our JSON webtoken
+        data['username'] = self.user.username
+        data['email'] = self.user.email
+
+        return data
+
+class MyTokenObtainPairView(TokenObtainPairView):
+    serializer_class = MyTokenObtainPairSerializer
+
+
+
 @api_view(['GET'])
 def getRoutes(request):
     routes = [
@@ -63,3 +82,22 @@ def getProduct(request, pk):
 #             product = i
 #             break
 #     return Response(product)
+
+
+
+
+
+# Another way to customize JSONwebtoken
+# class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
+#     @classmethod
+#     def get_token(cls, user):
+#         token = super().get_token(user)
+
+#         # Add custom claims
+#         token['username'] = user.username
+#         token['message'] = 'Hello World'
+
+#         return token
+
+# class MyTokenObtainPairView(TokenObtainPairView):
+#     serializer_class = MyTokenObtainPairSerializer
