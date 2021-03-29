@@ -7,7 +7,10 @@ npm install react-bootstrap                 [https://react-bootstrap.netlify.app
 npm install react-router-dom
 npm install react-router-bootstrap
 npm install axios
-
+npm install redux 
+npm install react-redux
+npm install redux-thunk
+npm i redux-devtools-extension       # connects store to browser extension
 
 BACKEND
 cd ecommerce
