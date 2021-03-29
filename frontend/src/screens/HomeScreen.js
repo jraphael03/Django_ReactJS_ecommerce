@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react'
 import { Row, Col } from 'react-bootstrap'
 import Product from '../components/Product'
+import Loader from '../components/Loader'
+import Message from '../components/Message'
 import { useDispatch, useSelector } from 'react-redux'      // useSelector allows you to use certain parts of your state
 import { listProducts } from '../actions/productActions'
 
@@ -22,9 +24,9 @@ function HomeScreen() {
         <h1>Latest Products</h1>
 
         {loading ? (                // If loading render loading, if error display reducer error msg, if finished render products
-          <h2>Loading...</h2>
+          <Loader />
         ) : error ? (
-          <h3>{error}</h3>
+          <Message variant="danger" >{error}</Message>
         ) : (
           <Row>
             {products.map((product) => (
