@@ -20,6 +20,7 @@ function ProductScreen({ match, history }) {     // Pass in match so we don't ha
 
   }, [dispatch, match])
 
+  
   const addToCartHandler = () => {
     //console.log('Button Clicked', match.params.id)
     history.push(`/cart/${match.params.id} ? qty=${qty}`)
