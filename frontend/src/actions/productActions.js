@@ -8,7 +8,7 @@ import {
 
 // Instead of making Products API call from HomeScreen we will do it in this file
 
-const listProducts = () => async (dispatch) => {    // dispatch action to reducers, then update state
+export const listProducts = () => async (dispatch) => {    // dispatch action to reducers, then update state
     try{
       dispatch({ type: PRODUCT_LIST_REQUEST })
 
