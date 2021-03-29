@@ -115,6 +115,13 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
 
 STATIC_URL = '/static/'
+MEDIA_URL = '/images/'      # Where to render images at
+
+STATICFILES_DIRS = [        # Created so django knows about our static folder
+    BASE_DIR / 'static'     # communicate with BASE_DIR / 'static'     folder
+]
+
+MEDIA_ROOT = 'static/images' # Any file that is uploaded from a Model, upload it here   static folder images folder
 
 # Cors header will allow any request only safe while developing
 CORS_ALLOW_ALL_ORIGINS = True
