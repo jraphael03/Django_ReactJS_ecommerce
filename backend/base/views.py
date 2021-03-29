@@ -2,7 +2,10 @@ from django.shortcuts import render
 from django.http import JsonResponse
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
+
+from .models import Product
 from .products import products
+from .serializers import ProductSerializer
 
 @api_view(['GET'])
 def getRoutes(request):
@@ -23,19 +26,40 @@ def getRoutes(request):
     return Response(routes)
 
 
-# GET PRODUCTS FROM PRODUCTS.PY FILE   [#http://127.0.0.1:8000/api/products/]
+# GET PRODUCTS DB  [#http://127.0.0.1:8000/api/products/]
 @api_view(['GET'])
 def getProducts(request):
-    return Response(products)
+    # returns all products from DB
+    products = Product.objects.all()
+    serializer = ProductSerializer(products, many=True)     # Serializing the model, serializing products, and set to many meaning many objects        
+    return Response(serializer.data)
 
 # GET PRODUCT BY ID        [#http://127.0.0.1:8000/api/products/id]
 @api_view(['GET'])
 def getProduct(request, pk):
-    product = None
-    for i in products:
-        if i['_id'] == pk:      # i[_id] == pk stop looping the dictionary
-            product = i
-            break
-    return Response(product)
+    product = Product.objects.get(_id=pk)
+    serializer = ProductSerializer(product, many=False)     # Serailize one product, many set to False because we only want one item
+    return Response(serializer.data)
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+# # GET PRODUCT BY ID in products.py       [#http://127.0.0.1:8000/api/products/id]
+# @api_view(['GET'])
+# def getProduct(request, pk):
+#     product = None
+#     for i in products:
+#         if i['_id'] == pk:      # i[_id] == pk stop looping the dictionary
+#             product = i
+#             break
+#     return Response(product)
