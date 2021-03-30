@@ -29,8 +29,8 @@ export const listProducts = () => async (dispatch) => {    // dispatch action to
     } catch(error){
         dispatch({
           type: PRODUCT_LIST_FAIL,
-          payload: error.response && error.response.data.message    // If we received an error message
-          ? error.response.data.message     // Give the error message
+          payload: error.response && error.response.data.detail    // If we received an error message
+          ? error.response.data.detail     // Give the error message, from detail which is from the backend
           : error.message,                  // If not display generic message
         })
 
@@ -55,8 +55,8 @@ export const listProductDetails = (id) => async (dispatch) => {
     dispatch({
       type: PRODUCT_DETAILS_FAIL,
       payload:
-        error.response && error.response.data.message // If we received an error message
-          ? error.response.data.message // Give the error message
+        error.response && error.response.data.detail // If we received an error message
+          ? error.response.data.detail // Give the error message
           : error.message, // If not display generic message
     });
   }
