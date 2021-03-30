@@ -22,7 +22,7 @@ export const login = (email, password) => async (dispatch) => {
 
         // make the post request,
         const { data } = await axios.post(      // Want to destructure data right away
-          "/api/users/login/"
+          "/api/users/login/",
           { 'username': email, 'password': password },
           config
         );      
