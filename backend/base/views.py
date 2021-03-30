@@ -47,7 +47,7 @@ def registerUser(request):
     try:
         user = User.objects.create(      # Inside of user.create is all of the data we want to get, then teh data will be stored inside of user which will then be serialized and returned to the frontend
             first_name = data['name'],       # We are using first_name for the full name 
-            username = data['email'],
+            username = data['email'],       # email is being set as the username
             email = data['email'],
             password = make_password(data['password'])      # make_password is an import that will hash the password
         )
