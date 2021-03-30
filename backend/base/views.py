@@ -1,8 +1,10 @@
 from django.shortcuts import render
 from django.http import JsonResponse
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from rest_framework.response import Response
 
+from django.contrib.auth.models import User
 from .models import Product
 from .products import products
 from .serializers import ProductSerializer, UserSerializer, UserSerializerWithToken
@@ -52,16 +54,26 @@ def getRoutes(request):
     return Response(routes)
 
 
-# GET USERS DB  [# http://127.0.0.1:8000/api/users/profile/
+# GET USERS DB          [# http://127.0.0.1:8000/api/users/profile/
 @api_view(['GET'])
+@permission_classes([IsAuthenticated])      # imported to block anyone from url if they are not authenticated
 def getUserProfile(request):
     user = request.user         # this user gets taken from JSON webtoken, does not work with admin login
     serializer = UserSerializer(user, many=False)     # Serializing the model, serializing user, and set to False meaning one object
     return Response(serializer.data)
 
 
+@api_view(['GET'])          # http://127.0.0.1:8000/api/users/
+@permission_classes([IsAdminUser])      # imported to block anyone from url if they are not isAdminUser
+def getUsers(request):
+    # returns all products from DB
+    users = User.objects.all()
+    serializer = UserSerializer(users, many=True)     # Serializing the model, serializing products, and set to many meaning many objects        
+    return Response(serializer.data)
 
-# GET PRODUCTS DB  [# http://127.0.0.1:8000/api/products/]
+
+
+# GET PRODUCTS DB  [# http://127.0.0.1:8000/api/products/
 @api_view(['GET'])
 def getProducts(request):
     # returns all products from DB
@@ -69,7 +81,7 @@ def getProducts(request):
     serializer = ProductSerializer(products, many=True)     # Serializing the model, serializing products, and set to many meaning many objects        
     return Response(serializer.data)
 
-# GET PRODUCT BY ID        [# http://127.0.0.1:8000/api/products/id]
+# GET PRODUCT BY ID        [# http://127.0.0.1:8000/api/products/id
 @api_view(['GET'])
 def getProduct(request, pk):
     product = Product.objects.get(_id=pk)
