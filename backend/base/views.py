@@ -13,6 +13,10 @@ from .serializers import ProductSerializer, UserSerializer, UserSerializerWithTo
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework_simplejwt.views import TokenObtainPairView
 
+from django.contrib.auth.hashers import make_password
+from rest_framework import status
+
+
 # CREATE JSON WEBTOKEN
 class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
     def validate(self, attrs):
@@ -33,25 +37,27 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
 class MyTokenObtainPairView(TokenObtainPairView):
     serializer_class = MyTokenObtainPairSerializer
 
+# POST REGISTER USER
+@api_view(["POST"])
+def registerUser(request):
+    data = request.data
+    #print('DATA:', data)
 
+    # if data is entered create user, except if the user(email) already exists
+    try:
+        user = User.objects.create(      # Inside of user.create is all of the data we want to get, then teh data will be stored inside of user which will then be serialized and returned to the frontend
+            first_name = data['name'],       # We are using first_name for the full name 
+            username = data['email'],
+            email = data['email'],
+            password = make_password(data['password'])      # make_password is an import that will hash the password
+        )
 
-@api_view(['GET'])
-def getRoutes(request):
-    routes = [
-        '/api/products/',
-        '/api/products/create/',
+        serializer = UserSerializerWithToken(user, many=False)      # UserSerializerWithToken so we can immediately create a token
+        return Response(serializer.data)
+    except:
+        message = {'detail': 'User with this email already exists'}
+        return Response(message, status=status.HTTP_400_BAD_REQUEST)
 
-        '/api/products/upload/',
-        
-        '/api/products/<id>/reviews/',
-
-        '/api/products/top/',
-        '/api/products/<id>/',
-
-        '/api/products/delete/<id>/',
-        '/api/products/<update>/<id>/',
-    ]
-    return Response(routes)
 
 
 # GET USERS DB          [# http://127.0.0.1:8000/api/users/profile/
