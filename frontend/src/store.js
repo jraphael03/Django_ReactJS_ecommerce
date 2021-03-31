@@ -24,11 +24,16 @@ const cartItemsFromStorage = localStorage.getItem('cartItems') ?
 const userInfoFromStorage = localStorage.getItem('userInfo') ?
     JSON.parse(localStorage.getItem('userInfo')) : null   // If user exist grab and parse them, or if the user don't exist set to null
 
+// Pull the items we sent to localStorage (userActions.js) to add to state
+const shippingAddressFromStorage = localStorage.getItem('shippingAddress') ?
+    JSON.parse(localStorage.getItem('shippingAddress')) : {}   // If shippingAddress exist grab and parse them, or if the addresss don't exist set to empty
 
 
 // Adding to our state
 const initialState = {
-  cart: { cartItems: cartItemsFromStorage },
+  cart: { cartItems: cartItemsFromStorage, 
+  shippingAddress: shippingAddressFromStorage,    // Placed in cart because it was created in cart reducers
+  },
   userLogin: {userInfo: userInfoFromStorage},
 }
 

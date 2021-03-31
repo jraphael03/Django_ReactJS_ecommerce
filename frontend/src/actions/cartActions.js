@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { CART_ADD_ITEM, CART_REMOVE_ITEM } from '../constants/cartConstants'
+import { CART_ADD_ITEM, CART_REMOVE_ITEM, CART_SAVE_SHIPPING_ADDRESS } from '../constants/cartConstants'
 
 
 // ADD ITEM TO CART
@@ -31,3 +31,18 @@ export const removeFromCart = (id) => (dispatch, getState) => {
 
     localStorage.setItem('cartItems', JSON.stringify(getState().cart.cartItems))        // This action is used in cartScreen
 }
+
+
+
+// SAVE SHIPPING ADDRESS
+export const saveShippingAddress = (data) => (dispatch) => {     // Pass in form data
+    dispatch({
+        type: CART_SAVE_SHIPPING_ADDRESS,
+        payload: data,    // when this is dispatch item with matching id will be removed
+    })
+
+    localStorage.setItem('shippingAddress', JSON.stringify(data))    // Passing in data
+}
+
+
+
