@@ -11,6 +11,12 @@ import {
   USER_DETAILS_REQUEST,
   USER_DETAILS_SUCCESS,
   USER_DETAILS_FAIL,
+  USER_DETAILS_RESET,
+
+  USER_UPDATE_PROFILE_REQUEST,
+  USER_UPDATE_PROFILE_SUCCESS,
+  USER_UPDATE_PROFILE_FAIL,
+  USER_UPDATE_PROFILE_RESET,
 } from "../constants/userConstants";
 
 // USER LOGIN 
@@ -67,11 +73,33 @@ export const userDetailsReducer = (state = { user: {} }, action) => {
     case USER_DETAILS_FAIL:
       return { loading: false, error: action.payload }; // when finished if nothing was found give an error
 
+      case USER_DETAILS_RESET:    // Clears out profile data when logged out
+        return { user: {} }
+
     default:
       return state; // If none of the above happen return back original state
   }
 };
 
 
+// USER UPDATE    
+export const userUpdateProfileReducer = (state = { }, action) => {
+  switch (action.type) {
+    case USER_UPDATE_PROFILE_REQUEST:
+      return { loading: true };
+
+    case USER_UPDATE_PROFILE_SUCCESS:
+      return { loading: false, success: true, userInfo: action.payload }; // success true with give a message that profile updated
+
+    case USER_UPDATE_PROFILE_FAIL:
+      return { loading: false, error: action.payload }; // when finished if nothing was found give an error
+
+    case USER_UPDATE_PROFILE_RESET:   // resets state
+      return {}
+
+    default:
+      return state; // If none of the above happen return back original state
+  }
+};
 
 

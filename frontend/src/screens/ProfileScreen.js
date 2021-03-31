@@ -4,7 +4,8 @@ import { Form, Button, Row, Col } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import Loader from "../components/Loader";
 import Message from "../components/Message";
-import { getUserDetails } from "../actions/userActions";
+import { getUserDetails, updateUserProfile } from "../actions/userActions";
+import { USER_UPDATE_PROFILE_RESET } from '../constants/userConstants'
 
 function ProfileScreen({ history }) {
   const [name, setName] = useState("");
@@ -25,19 +26,23 @@ function ProfileScreen({ history }) {
   const userLogin = useSelector((state) => state.userLogin); // Grabbing userLogin from the state, (found in store.js)
   const { userInfo } = userLogin; // Inside of userReducer we want to pull back the selected objects
 
+  const userUpdateProfile = useSelector((state) => state.userLogin); // Grabbing userLogin from the state, (found in store.js)
+  const { success } = userLogin; // Want to fire off the success message inside of userReducer
+
   // If the user is not logged in send them to login, if we do check if info has been loaded, if we don't have it we will dispatch it and once we get it we will set the state with it
   useEffect(() => {
     if (!userInfo) {
-      history.push('/login');
-    }else{
-        if(!user || !user.name){
-            dispatch(getUserDetails('profile'))
-        }else{
-            setName(user.name)
-            setEmail(user.email)
-        }
+      history.push("/login");
+    } else {
+      if (!user || !user.name || success) {
+        dispatch({type: USER_UPDATE_PROFILE_RESET})     // if success is true restart the State
+        dispatch(getUserDetails("profile"));
+      } else {
+        setName(user.name);
+        setEmail(user.email);
+      }
     }
-  }, [dispatch, history, userInfo, user]);
+  }, [dispatch, history, userInfo, user, success]);
 
   const submitHandler = (e) => {
     e.preventDefault();
@@ -45,7 +50,16 @@ function ProfileScreen({ history }) {
     if (password !== confirmPassword) {
       setMessage("Passwords do not match");
     } else {
-      console.log('Updating...')
+      dispatch(
+        updateUserProfile({
+          // dispatching the user object from our updateUserProfile actionModel
+          id: user._id,
+          name: name,
+          email: email,
+          password: password,
+        })
+      );
+      setMessage('')    // When successful setMessage will disappear
     }
   };
 
