@@ -8,6 +8,9 @@ import {
   USER_REGISTER_SUCCESS,
   USER_REGISTER_FAIL,
 
+  USER_DETAILS_REQUEST,
+  USER_DETAILS_SUCCESS,
+  USER_DETAILS_FAIL,
 } from "../constants/userConstants";
 
 // USER LOGIN 
@@ -52,6 +55,22 @@ export const userRegisterReducer = (state = {}, action) => {
 };
 
 
+// USER PROFILE    
+export const userDetailsReducer = (state = { user: {} }, action) => {
+  switch (action.type) {
+    case USER_DETAILS_REQUEST:
+      return {...state, loading: true };
+
+    case USER_DETAILS_SUCCESS:
+      return { loading: false, user: action.payload }; // When finished loading, userInfo is whatever data action was able to find
+
+    case USER_DETAILS_FAIL:
+      return { loading: false, error: action.payload }; // when finished if nothing was found give an error
+
+    default:
+      return state; // If none of the above happen return back original state
+  }
+};
 
 
 
