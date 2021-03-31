@@ -57,7 +57,6 @@ def registerUser(request):
         return Response(message, status=status.HTTP_400_BAD_REQUEST)
 
 
-
 # GET USERS DB          [# http://127.0.0.1:8000/api/users/profile/
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])      # imported to block anyone from url if they are not authenticated
@@ -67,6 +66,29 @@ def getUserProfile(request):
     return Response(serializer.data)
 
 
+# UPDATE USERS DB          [# http://127.0.0.1:8000/api/users/profile/update/
+@api_view(['PUT'])
+@permission_classes([IsAuthenticated])      # imported to block anyone from url if they are not authenticated
+def updateUserProfile(request):
+    user = request.user         # this user gets taken from JSON webtoken, does not work with admin login
+    serializer = UserSerializerWithToken(user, many=False)     # When we update we want to receive a new token
+
+    # When we get the new information we want to update the user
+    data = request.data     # Grab the data
+
+    user.first_name = data['name']
+    user.username = data['email']     # Using email as username
+    user.email = data['email']
+
+    #User can update their profile without changing their password
+    if data['password'] != '':
+        user.password = make_password(data['password']) # make_password to hash the password
+
+    user.save()
+    return Response(serializer.data)
+
+
+# GET ALL USERS FROM THE DB
 @api_view(['GET'])          # http://127.0.0.1:8000/api/users/
 @permission_classes([IsAdminUser])      # imported to block anyone from url if they are not isAdminUser
 def getUsers(request):

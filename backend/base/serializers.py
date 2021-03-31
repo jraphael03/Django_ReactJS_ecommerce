@@ -38,7 +38,7 @@ class UserSerializerWithToken(UserSerializer):
 
     def get_token(self, obj):
         token = RefreshToken.for_user(obj)
-        return str(token.access_token)      # token needs to be str when returned
+        return str(token.access_token)      # token needs to be str when returned, access token grants access to account Ex: updating
 
 # Used when Getting items
 class ProductSerializer(serializers.ModelSerializer):
