@@ -47,3 +47,8 @@ export const login = (email, password) => async (dispatch) => {
     }
 }
 
+// In reducer we have USER_LOGOUT SET TO AN EMPTY OBJECT SO THE STATE WILL ALSO BE CLEARED
+export const logout = () => (dispatch) => {
+    localStorage.removeItem('userInfo')     // Remove item from localStorage so we can logout
+    dispatch({ type: USER_LOGOUT })
+}
