@@ -40,6 +40,7 @@ function LoginScreen({ location, history }) {
         {error && <Message variant="danger">{error}</Message>}
         {loading && <Loader />}
         <Form onSubmit={submitHandler}>
+
           <Form.Group controlId="email">
             <Form.Label>Email Address</Form.Label>
             <Form.Control
@@ -73,7 +74,6 @@ function LoginScreen({ location, history }) {
                     Register
                     </Link>
             </Col>
-
         </Row>
 
       </FormContainer>
