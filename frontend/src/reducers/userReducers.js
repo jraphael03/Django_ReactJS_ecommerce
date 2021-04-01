@@ -17,6 +17,11 @@ import {
   USER_UPDATE_PROFILE_SUCCESS,
   USER_UPDATE_PROFILE_FAIL,
   USER_UPDATE_PROFILE_RESET,
+
+  USER_LIST_REQUEST,
+  USER_LIST_SUCCESS,
+  USER_LIST_FAIL,
+  USER_LIST_RESET,
 } from "../constants/userConstants";
 
 // USER LOGIN 
@@ -103,3 +108,23 @@ export const userUpdateProfileReducer = (state = { }, action) => {
 };
 
 
+
+// USER LIST ADMIN   
+export const userListReducer = (state = {users: []}, action) => {
+  switch (action.type) {
+    case USER_LIST_REQUEST:
+      return { loading: true };
+
+    case USER_LIST_SUCCESS:
+      return { loading: false, users: action.payload }; 
+
+    case USER_LIST_FAIL:
+      return { loading: false, error: action.payload }; // when finished if nothing was found give an error
+
+    case USER_LIST_RESET:   // resets state
+      return {users: []}
+
+    default:
+      return state; // If none of the above happen return back original state
+  }
+};

@@ -1,6 +1,6 @@
 import React from "react";
 import { useDispatch, useSelector } from 'react-redux'
-import { Container, Row, Button, Nav, Navbar, NavDropdown } from "react-bootstrap";
+import { Container, Row, Nav, Navbar, NavDropdown } from "react-bootstrap";
 import { LinkContainer } from "react-router-bootstrap";
 import "./Header.css";
 import { logout } from '../actions/userActions'
@@ -54,6 +54,24 @@ function Header() {
                     <i className="fas fa-user"></i>Login
                   </Nav.Link>
                 </LinkContainer>
+              )}
+              {/* If user is signed in and they are admin, add another dropdown list */}
+              {userInfo && userInfo.isAdmin && (
+                <NavDropdown title="Admin" id="Adminmenu">
+                  <LinkContainer to="/admin/userList">
+                    <NavDropdown.Item>Users</NavDropdown.Item>
+                  </LinkContainer>
+
+                  <LinkContainer to="/admin/productlist">
+                    <NavDropdown.Item>Products</NavDropdown.Item>
+                  </LinkContainer>
+
+                  <LinkContainer to="/admin/orderList">
+                    <NavDropdown.Item>Orders</NavDropdown.Item>
+                  </LinkContainer>
+
+                  
+                </NavDropdown>
               )}
             </Nav>
           </Navbar.Collapse>
