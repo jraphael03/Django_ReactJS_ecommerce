@@ -20,6 +20,7 @@ import {
   USER_UPDATE_PROFILE_RESET,
 } from "../constants/userConstants";
 
+import { ORDER_LIST_MY_RESET } from '../constants/orderConstants'
 // USER LOGIIN
 // we are going to take email and password,   
 export const login = (email, password) => async (dispatch) => {
@@ -62,13 +63,18 @@ export const login = (email, password) => async (dispatch) => {
     }
 }
 
+
+
+
 // USER LOGOUT
 // In reducer we have USER_LOGOUT SET TO AN EMPTY OBJECT SO THE STATE WILL ALSO BE CLEARED
 export const logout = () => (dispatch) => {
     localStorage.removeItem('userInfo')     // Remove item from localStorage so we can logout
     dispatch({ type: USER_LOGOUT })
     dispatch({ type: USER_DETAILS_RESET })
+    dispatch({ type: ORDER_LIST_MY_RESET })
 }
+
 
 
 // USER REGISTER

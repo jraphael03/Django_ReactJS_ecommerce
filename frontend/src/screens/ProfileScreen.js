@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { Form, Button, Row, Col } from "react-bootstrap";
+import { Form, Button, Row, Col, Table } from "react-bootstrap";
+import { LinkContainer } from 'react-router-bootstrap'
 import { useDispatch, useSelector } from "react-redux";
 import Loader from "../components/Loader";
 import Message from "../components/Message";
 import { getUserDetails, updateUserProfile } from "../actions/userActions";
 import { USER_UPDATE_PROFILE_RESET } from '../constants/userConstants'
+import { listMyOrders } from '../actions/orderActions'
 
 function ProfileScreen({ history }) {
   const [name, setName] = useState("");
@@ -19,15 +21,18 @@ function ProfileScreen({ history }) {
 
   const dispatch = useDispatch();
 
-  const userDetails = useSelector((state) => state.userDetails); // Grabbing userDetails from the state, (found in store.js)
+  const userDetails = useSelector(state => state.userDetails); // Grabbing userDetails from the state, (found in store.js)
   const { error, loading, user } = userDetails; // Inside of userReducer we want to pull back the selected objects
 
   // Want to make sure user is logged in first
-  const userLogin = useSelector((state) => state.userLogin); // Grabbing userLogin from the state, (found in store.js)
+  const userLogin = useSelector(state => state.userLogin); // Grabbing userLogin from the state, (found in store.js)
   const { userInfo } = userLogin; // Inside of userReducer we want to pull back the selected objects
 
-  const userUpdateProfile = useSelector((state) => state.userLogin); // Grabbing userLogin from the state, (found in store.js)
+  const userUpdateProfile = useSelector(state => state.userLogin); // Grabbing userLogin from the state, (found in store.js)
   const { success } = userLogin; // Want to fire off the success message inside of userReducer
+
+  const orderListMy = useSelector(state => state.orderListMy); // Grabbing orderListMy from the state, (found in store.js)
+  const { loading: loadingOrders, error: errorOrders, orders } = orderListMy; // Want to fire off the success message inside of userReducer
 
   // If the user is not logged in send them to login, if we do check if info has been loaded, if we don't have it we will dispatch it and once we get it we will set the state with it
   useEffect(() => {
@@ -35,8 +40,9 @@ function ProfileScreen({ history }) {
       history.push("/login");
     } else {
       if (!user || !user.name || success) {
-        dispatch({type: USER_UPDATE_PROFILE_RESET})     // if success is true restart the State
+        dispatch({ type: USER_UPDATE_PROFILE_RESET }); // if success is true restart the State
         dispatch(getUserDetails("profile"));
+        dispatch(listMyOrders());
       } else {
         setName(user.name);
         setEmail(user.email);
@@ -59,7 +65,7 @@ function ProfileScreen({ history }) {
           password: password,
         })
       );
-      setMessage('')    // When successful setMessage will disappear
+      setMessage(""); // When successful setMessage will disappear
     }
   };
 
@@ -122,6 +128,46 @@ function ProfileScreen({ history }) {
 
       <Col md={9}>
         <h2>My Orders</h2>
+        {loadingOrders ? (
+          <Loader />
+        ) : errorOrders ? (
+          <Message variant="danger">{errorOrders}</Message>
+        ) : (
+          <Table striped responsive className="table-sm">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Date</th>
+                <th>Total</th>
+                <th>Paid</th>
+                <th>Delivered</th>
+                <th></th>
+              </tr>
+            </thead>
+
+            <tbody>
+              {orders.map((order) => (
+                <tr key={order._id}>
+                  <td>{order._id}</td>
+                  <td>{order.createdAt.substring(0, 10)}</td>   {/* substring to the 9th character and doesn't show anything after */}
+                  <td>${order.totalPrice}</td>
+                  <td>
+                    {order.isPaid ? (
+                      order.paidAt.substring(0, 10)
+                    ) : (
+                      <i className="fas fa-times" style={{ color: "red" }}></i>
+                    )}
+                  </td>
+                  <td>
+                    <LinkContainer to={`/order/${order._id}`} >
+                      <Button className="btn-sm">Details</Button>
+                    </LinkContainer>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </Table>
+        )}
       </Col>
     </Row>
   );
