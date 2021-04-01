@@ -45,7 +45,7 @@ def addOrderItems(request):
         for i in orderItems:
             product = Product.objects.get(_id=i['product'])     # We want to get all items by id and in the frontend the id was placed as product
 
-            item = OrderItem.object.create(
+            item = OrderItem.objects.create(
                 product = product,
                 order = order,
                 name = product.name,
@@ -57,6 +57,6 @@ def addOrderItems(request):
             product.countInStock -= item.qty    # Update item amount after selling items
             product.save()
             
-    serializer = OrderSerializer(order, many=True)
-    return Response(serializer.data)
+        serializer = OrderSerializer(order, many=False)
+        return Response(serializer.data)
 

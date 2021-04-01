@@ -4,25 +4,55 @@ import { Link } from 'react-router-dom'
 import { useDispatch, useSelector } from "react-redux";
 import Message from "../components/Message";
 import CheckoutSteps from "../components/CheckoutSteps";
+import { createOrder } from '../actions/orderActions'
+import { ORDER_CREATE_RESET } from '../constants/orderConstants'
 
-function PlaceOrderScreen() {
+function PlaceOrderScreen({ history }) {
 
-    const cart = useSelector(state => state.cart)
+  const orderCreate = useSelector( state => state.orderCreate )   // Grab orderCreate from state and destructure actions
+  const{order, error, success} = orderCreate
 
-    cart.itemsPrice = cart.cartItems.reduce((acc, item) => acc + item.price * item.qty, 0).toFixed(2)
-    // If total is over $100 shipping is free, if not shipping is 10
-    cart.shippingPrice = (cart.itemsPrice > 100 ? 0 : 10).toFixed(2)
+  const dispatch = useDispatch()
 
-    cart.taxPrice = ((0.07) * cart.itemsPrice).toFixed(2)
+  const cart = useSelector(state => state.cart)
 
-    cart.totalPrice =
-      (Number(cart.itemsPrice) +
-      Number(cart.shippingPrice) +
-      Number(cart.taxPrice)).toFixed(2)
+  cart.itemsPrice = cart.cartItems.reduce((acc, item) => acc + item.price * item.qty, 0).toFixed(2)
+  // If total is over $100 shipping is free, if not shipping is 10
+  cart.shippingPrice = (cart.itemsPrice > 100 ? 0 : 10).toFixed(2)
 
-    const placeOrder = () => {
-        console.log('place order')
+  cart.taxPrice = ((0.07) * cart.itemsPrice).toFixed(2)
+
+  cart.totalPrice =
+    (Number(cart.itemsPrice) +
+    Number(cart.shippingPrice) +
+    Number(cart.taxPrice)).toFixed(2)
+
+
+    if(!cart.paymentMethod){
+      history.push('/payment')
     }
+
+
+    // On success after order send to users account to view the order
+    useEffect(() => {
+      if(success){
+        history.push(`/order/${order._id}`)
+        dispatch({ type: ORDER_CREATE_RESET })  // after redirect dispatch and reset state
+      }
+    }, [success, history])
+
+  const placeOrder = () => {
+      //console.log('place order')
+      dispatch(createOrder({      // Dispatch from cart state, and the states created for this screen above
+        orderItems: cart.cartItems,
+        shippingAddress: cart.shippingAddress,
+        paymentMethod: cart.paymentMethod,
+        itemsPrice: cart.itemsPrice,
+        shippingPrice: cart.shippingPrice,
+        taxPrice: cart.taxPrice,
+        totalPrice: cart.totalPrice,
+      }))
+  }
 
   return (
     <div>
@@ -122,6 +152,10 @@ function PlaceOrderScreen() {
                 <Col>Total:</Col>
                 <Col>${cart.totalPrice}</Col>
               </Row>
+            </ListGroup.Item>
+
+            <ListGroup.Item>
+              {error && <Message variant="danger">{error}</Message>}
             </ListGroup.Item>
 
             <ListGroup.Item>
