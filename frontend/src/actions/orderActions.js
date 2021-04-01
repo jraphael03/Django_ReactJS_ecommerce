@@ -7,6 +7,11 @@ import {
   ORDER_DETAILS_REQUEST,
   ORDER_DETAILS_SUCCESS,
   ORDER_DETAILS_FAIL,
+
+  ORDER_PAY_REQUEST,
+  ORDER_PAY_SUCCESS,
+  ORDER_PAY_FAIL,
+  ORDER_PAY_RESET,
 } from "../constants/orderConstants";
 
 import { CART_CLEAR_ITEMS } from '../constants/cartConstants'
@@ -104,6 +109,51 @@ export const getOrderDetails = (id) => async (dispatch, getState) => {
   } catch (error) {
     dispatch({
       type: ORDER_DETAILS_FAIL,
+      payload:
+        error.response && error.response.data.detail // If we received an error message
+          ? error.response.data.detail // Give the error message, from detail which is from the backend
+          : error.message, // If not display generic message
+    });
+  }
+};
+
+
+
+export const payOrder = (id, paymentResult) => async (dispatch, getState) => {
+  // Take in order object that will gather the data and send the data to db
+  try {
+    // set ORDER_CREATE_REQUEST,
+    dispatch({
+      type: ORDER_PAY_REQUEST,
+    });
+
+    const {
+      userLogin: { userInfo }, //We want to get data about the profile we are logged in as, userInfo is the state
+    } = getState();
+
+    const config = {
+      headers: {
+        "content-type": "application/json",
+        Authorization: `Bearer ${userInfo.token}`, // Pass in the token from logged in user for authorization access
+      },
+    };
+
+    // make the put request,
+    const { data } = await axios.put(
+      // Want to destructure data right away
+      `/api/orders/${id}/pay/`,
+      paymentResult,
+      config
+    );
+
+    // and if it is successful dispatch payload to the reducer
+    dispatch({
+      type: ORDER_PAY_SUCCESS,
+      payload: data,
+    });
+  } catch (error) {
+    dispatch({
+      type: ORDER_PAY_FAIL,
       payload:
         error.response && error.response.data.detail // If we received an error message
           ? error.response.data.detail // Give the error message, from detail which is from the backend
