@@ -1,3 +1,6 @@
+https://developer.paypal.com/home
+https://www.sandbox.paypal.com/
+
 FRONTEND
 mkdir ecommerce
 cd ecommerce
@@ -11,6 +14,7 @@ npm install redux
 npm install react-redux
 npm install redux-thunk
 npm i redux-devtools-extension       # connects store to browser extension
+npm i react-paypal-button-v2
 
 BACKEND
 cd ecommerce

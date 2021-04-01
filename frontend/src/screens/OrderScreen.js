@@ -2,17 +2,24 @@ import React, { useState, useEffect } from "react";
 import { Button, Row, Col, ListGroup, Image, Card } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
+import { PayPalButton } from 'react-paypal-button-v2'
 import Message from "../components/Message";
 import Loader from '../components/Loader'
-import { getOrderDetails } from "../actions/orderActions";
+import { getOrderDetails, payOrder } from "../actions/orderActions";
+import { ORDER_PAY_RESET } from '../constants/orderConstants'
 
 function OrderScreen({ match }) {
   const orderId = match.params.id;
 
   const dispatch = useDispatch();
 
+  const [sdkReady, setSdkReady] = useState(false)
+
   const orderDetails = useSelector((state) => state.orderDetails); // Grab orderCreate from state and destructure actions
   const { order, error, loading } = orderDetails;
+
+    const orderPay = useSelector((state) => state.orderPay); // Grab orderCreate from state and destructure actions
+    const { loading: loadingPay, success: successPay } = orderPay;
 
   if (!loading && !error) {
     // only loaded if we have it
@@ -20,17 +27,42 @@ function OrderScreen({ match }) {
       .reduce((acc, item) => acc + item.price * item.qty, 0)
       .toFixed(2);
   }
+  // clientId payPal
+  // AcBG3ZtzTgvR-nEIRCzjHqFsn-hvD34mSsuO8R-IBHLGuQfS2fCBafdAc62WXjqKL_3UkozqzrQKrJoS
+
+  // Create HTML function to use smart paypal buttons
+  const addPayPalScript = () => {
+    const script = document.createElement('script')
+    script.type ='text/javascript'
+    script.src =
+      "https://www.paypal.com/sdk/js?client-id=AcBG3ZtzTgvR-nEIRCzjHqFsn-hvD34mSsuO8R-IBHLGuQfS2fCBafdAc62WXjqKL_3UkozqzrQKrJoS";
+      script.async = true
+      script.onload = () => {
+        setSdkReady(true)
+      }
+      document.body.appendChild(script)   // Append the script above to the body when it is don
+  }
 
   // On success after order send to users account to view the order
   useEffect(() => {
-    if (!order || order._id !== Number(orderId)) {
-      // _id is how id is set in the backend
-
+    if (!order || successPay || order._id !== Number(orderId)) {    // _id is how id is set in the backend
+      dispatch({ type: ORDER_PAY_RESET });
+      
       dispatch(getOrderDetails(orderId));
+    }else if(!order.isPaid){
+      if(!window.paypal){   // if window doesn't have paypal display script
+        addPayPalScript()
+      }else{
+        setSdkReady(true)   // if it does set to true
+      }
     }
-  }, [order, orderId]);
+  }, [dispatch, order, orderId, successPay]);
 
-        // If loading show loader, if error display message error, if neither display order page
+  const successPaymentHandler = (paymentResult) => {
+    dispatch(payOrder(orderId, paymentResult))    // payOrder sends API call and update DB
+  }
+
+  // If loading show loader, if error display message error, if neither display order page
   return loading ? (
     <Loader />
   ) : error ? (
@@ -65,11 +97,12 @@ function OrderScreen({ match }) {
               </p>
 
               {order.isDelivered ? (
-                <Message variant="success">Delivered on {order.deliveredAt}</Message>
+                <Message variant="success">
+                  Delivered on {order.deliveredAt}
+                </Message>
               ) : (
                 <Message variant="warning">Not Delivered</Message>
               )}
-
             </ListGroup.Item>
 
             <ListGroup.Item>
@@ -156,6 +189,22 @@ function OrderScreen({ match }) {
                 <Col>${order.totalPrice}</Col>
               </Row>
             </ListGroup.Item>
+
+            {/* If order is not paid ouput button, if it is disable */}
+            {!order.isPaid && (
+              <ListGroup.Item>
+                {loadingPay && <Loader />}
+
+                {!sdkReady ? (
+                  <Loader />
+                ) : (
+                  <PayPalButton
+                    amount={order.totalPrice}
+                    onSuccess={successPaymentHandler}
+                  />
+                )}
+              </ListGroup.Item>
+            )}
 
             <ListGroup.Item>
               {error && <Message variant="danger">{error}</Message>}
