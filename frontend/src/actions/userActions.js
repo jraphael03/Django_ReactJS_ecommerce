@@ -17,7 +17,6 @@ import {
   USER_UPDATE_PROFILE_REQUEST,
   USER_UPDATE_PROFILE_SUCCESS,
   USER_UPDATE_PROFILE_FAIL,
-  USER_UPDATE_PROFILE_RESET,
 
   USER_LIST_REQUEST,
   USER_LIST_SUCCESS,
@@ -27,6 +26,10 @@ import {
   USER_DELETE_REQUEST,
   USER_DELETE_SUCCESS,
   USER_DELETE_FAIL,
+
+  USER_UPDATE_REQUEST,
+  USER_UPDATE_SUCCESS,
+  USER_UPDATE_FAIL,
 } from "../constants/userConstants";
 
 import { ORDER_LIST_MY_RESET } from '../constants/orderConstants'
@@ -282,7 +285,7 @@ export const listUsers = ( ) => async (dispatch, getState) => {    // Take in us
 };
 
 
-// DELETE USER FROM THE DB
+// DELETE USER IN THE DB AS ADMIN
 export const deleteUser = (id) => async (dispatch, getState) => {    // Take in ID to get specific user
   try {
     // set USER_DELETE_REQUEST,
@@ -325,7 +328,53 @@ export const deleteUser = (id) => async (dispatch, getState) => {    // Take in 
 };
 
 
+// UPDATE USER IN THE DB AS ADMIN
+export const updateUser = (user) => async (dispatch, getState) => {    // Take in user to get specific user
+  try {
+    // set USER_UPDATE_REQUEST,
+    dispatch({
+      type: USER_UPDATE_REQUEST,
+    });
 
+    const {
+      userLogin: { userInfo }, //We want to get data about the profile we are logged in as, userInfo is the state
+    } = getState();
+
+    const config = {
+      headers: {
+        "content-type": "application/json",
+        Authorization: `Bearer ${userInfo.token}`, // Pass in the token from logged in user for authorization access
+      },
+    };
+
+    // make the put request,
+    const { data } = await axios.put(
+      // Want to destructure data right away
+      `/api/users/update/${user._id}/`,
+      user,   // user(formdata) sends to the user object that was passed in the top
+      config
+    );
+
+    // and if it is successful dispatch payload to the reducer
+    dispatch({
+      type: USER_UPDATE_SUCCESS,
+    });
+
+    dispatch({
+      type: USER_DETAILS_SUCCESS,   // When the update is complete reload and show new details for the user
+      payload: data
+    });
+
+  } catch (error) {
+    dispatch({
+      type: USER_UPDATE_FAIL,
+      payload:
+        error.response && error.response.data.detail // If we received an error message
+          ? error.response.data.detail // Give the error message, from detail which is from the backend
+          : error.message, // If not display generic message
+    });
+  }
+};
 
 
 

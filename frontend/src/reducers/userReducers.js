@@ -26,6 +26,11 @@ import {
   USER_DELETE_REQUEST,
   USER_DELETE_SUCCESS,
   USER_DELETE_FAIL,
+
+  USER_UPDATE_REQUEST,
+  USER_UPDATE_SUCCESS,
+  USER_UPDATE_FAIL,
+  USER_UPDATE_RESET,
 } from "../constants/userConstants";
 
 // USER LOGIN 
@@ -135,7 +140,7 @@ export const userListReducer = (state = {users: []}, action) => {
 
 
 
-// DELETE USER FROM DB
+// DELETE USER FROM DB AS ADMIN
 export const userDeleteReducer = (state = {}, action) => {
   switch (action.type) {
     case USER_DELETE_REQUEST:
@@ -152,3 +157,23 @@ export const userDeleteReducer = (state = {}, action) => {
   }
 };
 
+
+// UPDATE USER FROM DB AS ADMIN
+export const userUpdateReducer = (state = {user:{}}, action) => {
+  switch (action.type) {
+    case USER_UPDATE_REQUEST:
+      return { loading: true };
+
+    case USER_UPDATE_SUCCESS:
+      return { loading: false, success: true }; // success message if it works
+
+    case USER_UPDATE_FAIL:
+      return { loading: false, error: action.payload }; // when finished if nothing was found give an error
+
+    case USER_UPDATE_RESET:
+      return { user: {} }   // reset user state
+
+    default:
+      return state; // If none of the above happen return back original state
+  }
+};
