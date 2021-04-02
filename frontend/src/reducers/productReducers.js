@@ -9,6 +9,10 @@ import {
   PRODUCT_DETAILS_REQUEST,
   PRODUCT_DETAILS_SUCCESS,
   PRODUCT_DETAILS_FAIL,
+
+  PRODUCT_DELETE_REQUEST,
+  PRODUCT_DELETE_SUCCESS,
+  PRODUCT_DELETE_FAIL,
 } from "../constants/productConstants";
 
 
@@ -40,6 +44,24 @@ export const productDetailsReducer = (state = { product: { reviews:[] } }, actio
       return { loading: false, product: action.payload }; // When finished loading, product is whatever data action was able to find
 
     case PRODUCT_DETAILS_FAIL:
+      return { loading: false, error: action.payload }; // when finished if nothing was found give an error
+
+    default:
+      return state; // If none of the above happen return back original state
+  }
+};
+
+
+export const productDeleteReducer = ( state = { }, action ) => {
+  // state is an empty array of products
+  switch (action.type) {
+    case PRODUCT_DELETE_REQUEST:
+      return { loading: true }; // While loading product array spread state
+
+    case PRODUCT_DELETE_SUCCESS:
+      return { loading: false, success: true }; 
+
+    case PRODUCT_DELETE_FAIL:
       return { loading: false, error: action.payload }; // when finished if nothing was found give an error
 
     default:

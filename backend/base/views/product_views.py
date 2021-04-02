@@ -18,7 +18,7 @@ def getProducts(request):
     serializer = ProductSerializer(products, many=True)     # Serializing the model, serializing products, and set to many meaning many objects        
     return Response(serializer.data)
 
-# GET PRODUCT BY ID        [# http://127.0.0.1:8000/api/products/id
+# GET PRODUCT BY ID        [# http://127.0.0.1:8000/api/products/id/
 @api_view(['GET'])
 def getProduct(request, pk):
     product = Product.objects.get(_id=pk)
@@ -26,3 +26,10 @@ def getProduct(request, pk):
     return Response(serializer.data)
 
 
+# DELETE PRODUCT BY ID USING ADMIN       [ # http://127.0.0.1:8000/api/delete/<str:pk>/
+@api_view(['DELETE'])
+@permission_classes([IsAdminUser])
+def deleteProduct(request, pk):
+    product = Product.objects.get(_id=pk)
+    product.delete()
+    return Response('Product deleted')
