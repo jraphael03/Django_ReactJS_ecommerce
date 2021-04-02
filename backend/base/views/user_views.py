@@ -99,6 +99,38 @@ def getUsers(request):
 
 
 
+
+# GET USER AND SERIALIZE USER BY ID PASSED IN URL       # http://127.0.0.1:8000/api/<str:pk>/
+@api_view(['GET'])          
+@permission_classes([IsAdminUser])      # Only for Admin use
+def getUserById(request, pk):
+    # returns all products from DB
+    user = User.objects.get(id=pk)
+    serializer = UserSerializer(user, many=False)     # Serializing the model, serializing products, and set to many meaning many objects        
+    return Response(serializer.data)
+
+
+# GETS USER BY ID MODIFIES DATA SAVES THE USER AND SERIALIZE NEW USER, RETURN TO FRONTEND       # http://127.0.0.1:8000/api/update/<str:pk>/
+@api_view(['PUT'])
+@permission_classes([IsAuthenticated])      
+def updateUser(request, pk):
+    user = User.object.get(id=pk)        
+
+    # When we get the new information we want to update the user
+    data = request.data     # Grab the data
+
+    user.first_name = data['name']
+    user.username = data['email']     # Using email as username
+    user.email = data['email']
+    user.is_staff = data['isAdmin']     # Gives admin the choice to make user admin  isAdmin = [is_staff in backend]
+
+    user.save()
+
+    serializer = UserSerializer(user, many=False)     
+    return Response(serializer.data)
+
+
+
 # DELETE USER FROM DB       # http://127.0.0.1:8000/api/delete/<str:pk>/
 @api_view(['DELETE'])
 @permission_classes([IsAdminUser])

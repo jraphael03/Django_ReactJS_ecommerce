@@ -17,5 +17,8 @@ urlpatterns = [
     path('profile/update/', views.updateUserProfile, name="user-profile-update"),      # http://127.0.0.1:8000/api/users/profile/update/
     path('', views.getUsers, name="users"),      # http://127.0.0.1:8000/api/users/
     
+    path('<str:pk>/', views.getUserById, name="user"),  # http://127.0.0.1:8000/api/<str:pk>/
+    path('update/<str:pk>/', views.updateUser, name="user-update"),     # http://127.0.0.1:8000/api/update/<str:pk>/
+
     path('delete/<str:pk>/', views.deleteUser, name="user-delete"),      # http://127.0.0.1:8000/api/delete/<str:pk>/
 ]
