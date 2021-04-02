@@ -26,6 +26,47 @@ def getProduct(request, pk):
     return Response(serializer.data)
 
 
+# CREATE PRODUCT AS ADMIN        [# http://127.0.0.1:8000/api/create/
+@api_view(['POST'])
+@permission_classes([IsAdminUser])
+def createProduct(request):
+
+    user = request.user
+
+    product = Product.objects.create(
+        user = user,
+        name = 'Sample Name',
+        price = 0,
+        brand = 'Sample Brand',
+        countInStock = 0,
+        category = 'Sample Category',
+        description = ''
+    )
+
+    serializer = ProductSerializer(product, many=False)     # Serailize one product, many set to False because we only want one item
+    return Response(serializer.data)
+
+
+# UPDATE PRODUCT BY ID AS ADMIN        [# http://127.0.0.1:8000/api/update/<str:pk>/
+@api_view(['PUT'])
+@permission_classes([IsAdminUser])
+def updateProduct(request, pk):
+    data = request.data
+    product = Product.objects.get(_id=pk)
+
+    product.name = data['name']
+    product.price = data['price']
+    product.brand = data['brand']
+    product.countInStock = data['countInStock']
+    product.category = data['category']
+    product.description = data['description']
+
+    product.save()
+
+    serializer = ProductSerializer(product, many=False)     # Serailize one product, many set to False because we only want one item
+    return Response(serializer.data)
+
+
 # DELETE PRODUCT BY ID USING ADMIN       [ # http://127.0.0.1:8000/api/delete/<str:pk>/
 @api_view(['DELETE'])
 @permission_classes([IsAdminUser])
