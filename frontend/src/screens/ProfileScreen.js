@@ -39,7 +39,7 @@ function ProfileScreen({ history }) {
     if (!userInfo) {
       history.push("/login");
     } else {
-      if (!user || !user.name || success) {
+      if (!user || !user.name || success || userInfo._id !== user._id) {    // userInfo._id don't match user._id fire off state and get new user info
         dispatch({ type: USER_UPDATE_PROFILE_RESET }); // if success is true restart the State
         dispatch(getUserDetails("profile"));
         dispatch(listMyOrders());
