@@ -21,13 +21,12 @@ function UserListScreen({ history }) {
 
     useEffect(() => {
       // PROTECT ADMIN ROUTES
-      if(userInfo && userInfo.isAdmin){
+      if (userInfo && userInfo.isAdmin) {
         dispatch(listUsers());
-      }else{
-        history.push('/login')
+      } else {
+        history.push("/login");
       }
-        
-    }, [dispatch, history, successDelete])
+    }, [dispatch, history, successDelete, userInfo]);
 
     const deleteHandler = (id) => {
       // Prevent accidental deletion with confirmation before deletion
