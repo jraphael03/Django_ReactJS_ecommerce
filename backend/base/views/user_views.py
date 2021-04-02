@@ -96,3 +96,13 @@ def getUsers(request):
     users = User.objects.all()
     serializer = UserSerializer(users, many=True)     # Serializing the model, serializing products, and set to many meaning many objects        
     return Response(serializer.data)
+
+
+
+# DELETE USER FROM DB       # http://127.0.0.1:8000/api/delete/<str:pk>/
+@api_view(['DELETE'])
+@permission_classes([IsAdminUser])
+def deleteUser(request, pk):
+    userForDeletion = User.objects.get(id=pk)
+    userForDeletion.delete()
+    return Response('User was deleted')

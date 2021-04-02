@@ -23,6 +23,10 @@ import {
   USER_LIST_SUCCESS,
   USER_LIST_FAIL,
   USER_LIST_RESET,
+
+  USER_DELETE_REQUEST,
+  USER_DELETE_SUCCESS,
+  USER_DELETE_FAIL,
 } from "../constants/userConstants";
 
 import { ORDER_LIST_MY_RESET } from '../constants/orderConstants'
@@ -276,6 +280,51 @@ export const listUsers = ( ) => async (dispatch, getState) => {    // Take in us
     });
   }
 };
+
+
+// DELETE USER FROM THE DB
+export const deleteUser = (id) => async (dispatch, getState) => {    // Take in ID to get specific user
+  try {
+    // set USER_DELETE_REQUEST,
+    dispatch({
+      type: USER_DELETE_REQUEST,
+    });
+
+    const {
+      userLogin: { userInfo }, //We want to get data about the profile we are logged in as, userInfo is the state
+    } = getState();
+
+    const config = {
+      headers: {
+        "content-type": "application/json",
+        Authorization: `Bearer ${userInfo.token}`, // Pass in the token from logged in user for authorization access
+      },
+    };
+
+    // make the put request,
+    const { data } = await axios.delete(
+      // Want to destructure data right away
+      `/api/users/delete/${id}/`,
+      config
+    );
+
+    // and if it is successful dispatch payload to the reducer
+    dispatch({
+      type: USER_DELETE_SUCCESS,
+      payload: data,
+    });
+  } catch (error) {
+    dispatch({
+      type: USER_DELETE_FAIL,
+      payload:
+        error.response && error.response.data.detail // If we received an error message
+          ? error.response.data.detail // Give the error message, from detail which is from the backend
+          : error.message, // If not display generic message
+    });
+  }
+};
+
+
 
 
 

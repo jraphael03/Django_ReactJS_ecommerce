@@ -22,6 +22,10 @@ import {
   USER_LIST_SUCCESS,
   USER_LIST_FAIL,
   USER_LIST_RESET,
+
+  USER_DELETE_REQUEST,
+  USER_DELETE_SUCCESS,
+  USER_DELETE_FAIL,
 } from "../constants/userConstants";
 
 // USER LOGIN 
@@ -128,3 +132,23 @@ export const userListReducer = (state = {users: []}, action) => {
       return state; // If none of the above happen return back original state
   }
 };
+
+
+
+// DELETE USER FROM DB
+export const userDeleteReducer = (state = {}, action) => {
+  switch (action.type) {
+    case USER_DELETE_REQUEST:
+      return { loading: true };
+
+    case USER_DELETE_SUCCESS:
+      return { loading: false, success: true }; // success message if it works 
+
+    case USER_DELETE_FAIL:
+      return { loading: false, error: action.payload }; // when finished if nothing was found give an error
+
+    default:
+      return state; // If none of the above happen return back original state
+  }
+};
+
