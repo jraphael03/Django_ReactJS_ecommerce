@@ -24,6 +24,10 @@ import {
   PRODUCT_CREATE_REVIEW_REQUEST,
   PRODUCT_CREATE_REVIEW_SUCCESS,
   PRODUCT_CREATE_REVIEW_FAIL,
+
+  PRODUCT_TOP_REQUEST,
+  PRODUCT_TOP_SUCCESS,
+  PRODUCT_TOP_FAIL,
 } from "../constants/productConstants";
 
 // Instead of making Products API call from HomeScreen we will do it in this file
@@ -255,3 +259,29 @@ export const createProductReview = (productId, review) => async (dispatch, getSt
     });
   }
 };
+
+
+// GET TOP PRODUCST
+export const listTopProducts = () => async (dispatch) => {    // dispatch action to reducers, then update state
+    try{
+      dispatch({ type: PRODUCT_TOP_REQUEST })
+
+      // MAKE API CALL
+      const { data } = await axios.get(`/api/products/top/`)     // GRAB AND DESTRUCTURE DATA, if using SearchBox append keyword to the end
+
+      dispatch({
+        type: PRODUCT_TOP_SUCCESS,
+        payload: data       // data we return from the API call
+      })
+        
+
+    } catch(error){
+        dispatch({
+          type: PRODUCT_TOP_FAIL,
+          payload: error.response && error.response.data.detail    // If we received an error message
+          ? error.response.data.detail     // Give the error message, from detail which is from the backend
+          : error.message,                  // If not display generic message
+        })
+
+    }
+}

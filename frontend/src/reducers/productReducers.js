@@ -28,6 +28,10 @@ import {
   PRODUCT_CREATE_REVIEW_SUCCESS,
   PRODUCT_CREATE_REVIEW_FAIL,
   PRODUCT_CREATE_REVIEW_RESET,
+
+  PRODUCT_TOP_REQUEST,
+  PRODUCT_TOP_SUCCESS,
+  PRODUCT_TOP_FAIL,
 } from "../constants/productConstants";
 
 
@@ -147,6 +151,24 @@ export const productReviewCreateReducer = (state = { }, action) => {
 
     case PRODUCT_CREATE_REVIEW_RESET:
       return { product: {} };
+
+    default:
+      return state; // If none of the above happen return back original state
+  }
+};
+
+
+export const productTopRatedReducer = (state = { products: [] }, action) => {
+  // state is an empty array of products
+  switch (action.type) {
+    case PRODUCT_TOP_REQUEST:
+      return { loading: true, products: [] };
+
+    case PRODUCT_TOP_SUCCESS:
+      return { loading: false, products: action.payload, };
+
+    case PRODUCT_TOP_FAIL:
+      return { loading: false, error: action.payload }; // when finished if nothing was found give an error
 
     default:
       return state; // If none of the above happen return back original state

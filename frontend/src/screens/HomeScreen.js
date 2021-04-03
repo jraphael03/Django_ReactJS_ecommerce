@@ -4,6 +4,7 @@ import Product from '../components/Product'
 import Loader from '../components/Loader'
 import Message from '../components/Message'
 import Paginate from '../components/Paginate'
+import ProductCarousel from "../components/ProductCarousel";
 import { useDispatch, useSelector } from 'react-redux'      // useSelector allows you to use certain parts of your state
 import { listProducts } from '../actions/productActions'
 
@@ -24,12 +25,14 @@ function HomeScreen({ history }) {
 
     return (
       <div>
+        {/* If we are not searching display carousel */}
+        {!keyword && <ProductCarousel />}
         <h1>Latest Products</h1>
 
-        {loading ? (                // If loading render loading, if error display reducer error msg, if finished render products
+        {loading ? ( // If loading render loading, if error display reducer error msg, if finished render products
           <Loader />
         ) : error ? (
-          <Message variant="danger" >{error}</Message>
+          <Message variant="danger">{error}</Message>
         ) : (
           <div>
             <Row>

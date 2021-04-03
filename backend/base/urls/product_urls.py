@@ -9,6 +9,7 @@ urlpatterns = [
     path('upload/', views.uploadImage, name="imaeg-upload"),   # http://127.0.0.1:8000/api/upload/
 
     path('<str:pk>/reviews/', views.createProductReview, name="create-review"),      # http://127.0.0.1:8000/api/products/<str:pk>/reviews/
+    path('top/', views.getTopProducts, name='top-products'),     # http://127.0.0.1:8000/api/top/
     path('<str:pk>/', views.getProduct, name="product"),      # http://127.0.0.1:8000/api/products/<str:pk>/
 
     path('update/<str:pk>/', views.updateProduct, name="product-update"),   # http://127.0.0.1:8000/api/update/<str:pk>/

@@ -42,6 +42,16 @@ def getProducts(request):
     serializer = ProductSerializer(products, many=True)     # Serializing the model, serializing products, and set to many meaning many objects        
     return Response({ 'products': serializer.data, 'page': page, 'pages': paginator.num_pages })
 
+
+# GET TOP RATED PRODUCTS FROM THE DB        # http://127.0.0.1:8000/api/top/
+@api_view(['GET'])
+def getTopProducts(request):
+    products = Product.objects.filter(rating__gte=4).order_by('-rating')[0:5]    # gte = greater than or equal to 4 (-rating) start Ascending order 
+
+    serializer = ProductSerializer(products, many=True)     # Serializing the model, serializing products, and set to many meaning many objects        
+    return Response(serializer.data)
+
+
 # GET PRODUCT BY ID        [# http://127.0.0.1:8000/api/products/id/
 @api_view(['GET'])
 def getProduct(request, pk):
