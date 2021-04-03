@@ -12,6 +12,10 @@ import {
   PRODUCT_DELETE_REQUEST,
   PRODUCT_DELETE_SUCCESS,
   PRODUCT_DELETE_FAIL,
+
+  PRODUCT_CREATE_REQUEST,
+  PRODUCT_CREATE_SUCCESS,
+  PRODUCT_CREATE_FAIL,
 } from "../constants/productConstants";
 
 // Instead of making Products API call from HomeScreen we will do it in this file
@@ -84,7 +88,7 @@ export const deleteProduct = (id) => async (dispatch, getState) => {
       },
     };
 
-    // make the put request,
+    // make the delete request,
     const { data } = await axios.delete(
       // Want to destructure data right away
       `/api/products/delete/${id}/`,
@@ -98,6 +102,50 @@ export const deleteProduct = (id) => async (dispatch, getState) => {
   } catch (error) {
     dispatch({
       type: PRODUCT_DELETE_FAIL,
+      payload:
+        error.response && error.response.data.detail // If we received an error message
+          ? error.response.data.detail // Give the error message, from detail which is from the backend
+          : error.message, // If not display generic message
+    });
+  }
+};
+
+
+
+// CREATE PRODUCT FROM DB AS ADMIN
+export const createProduct = () => async (dispatch, getState) => {
+  try {
+    dispatch({
+      type: PRODUCT_CREATE_REQUEST,
+    });
+
+    const {
+      userLogin: { userInfo }, //We want to get data about the profile we are logged in as, userInfo is the state
+    } = getState();
+
+    const config = {
+      headers: {
+        "content-type": "application/json",
+        Authorization: `Bearer ${userInfo.token}`, // Pass in the token from logged in user for authorization access
+      },
+    };
+
+    // make the post request,
+    const { data } = await axios.post(
+      // Want to destructure data right away
+      `/api/products/create/`,
+      {},     // Send an empty object to create in backend
+      config
+    );
+
+    // and if it is successful dispatch payload to the reducer
+    dispatch({
+      type: PRODUCT_CREATE_SUCCESS,
+      payload: data,
+    });
+  } catch (error) {
+    dispatch({
+      type: PRODUCT_CREATE_FAIL,
       payload:
         error.response && error.response.data.detail // If we received an error message
           ? error.response.data.detail // Give the error message, from detail which is from the backend

@@ -4,7 +4,8 @@ import { Table, Button, Row, Col } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import Loader from "../components/Loader";
 import Message from "../components/Message";
-import { listProducts, deleteProduct } from "../actions/productActions";
+import { listProducts, deleteProduct, createProduct } from "../actions/productActions";
+import { PRODUCT_CREATE_RESET } from '../constants/productConstants'
 
 function ProductListScreen({ history, match }) {
   const dispatch = useDispatch();
@@ -12,20 +13,30 @@ function ProductListScreen({ history, match }) {
   const productList = useSelector((state) => state.productList);
   const { loading, error, products } = productList;
 
-    const productDelete = useSelector((state) => state.productDelete);
-    const { loading: loadingDelete, error: errorDelete, success: successDelete } = productDelete;
+  const productDelete = useSelector((state) => state.productDelete);
+  const { loading: loadingDelete, error: errorDelete, success: successDelete } = productDelete;
+
+    const productCreate = useSelector((state) => state.productCreate);
+    const { loading: loadingCreate, error: errorCreate, success: successCreate, product: createdProduct } = productCreate;
 
   const userLogin = useSelector((state) => state.userLogin);
   const { userInfo } = userLogin;
 
   useEffect(() => {
+    dispatch({ type: PRODUCT_CREATE_RESET })  // Clear state
+
     // PROTECT ADMIN ROUTES
-    if (userInfo && userInfo.isAdmin) {
-      dispatch(listProducts());
-    } else {
+    if (!userInfo.isAdmin) {
       history.push("/login");
     }
-  }, [dispatch, history, userInfo, successDelete]);   // Add in success delete so when something is deleted page will refresh
+
+    if(successCreate){
+      history.push(`/admin/product/${createdProduct._id}/edit`)
+    }else{
+      dispatch(listProducts())
+    }
+
+  }, [dispatch, history, userInfo, successDelete, successCreate, createdProduct]);   // Add in success delete so when something is deleted page will refresh
 
   const deleteHandler = (id) => {
     // Prevent accidental deletion with confirmation before deletion
@@ -34,8 +45,9 @@ function ProductListScreen({ history, match }) {
     }
   };
 
-  const createProductHandler = (product) => {
+  const createProductHandler = () => {
       // Create product
+    dispatch(createProduct())
   }
 
   return (
@@ -52,8 +64,11 @@ function ProductListScreen({ history, match }) {
         </Col>
       </Row>
 
-      {loadingDelete && <Loader/>}
+      {loadingDelete && <Loader />}
       {errorDelete && <Message variant="danger">{errorDelete}</Message>}
+
+      {loadingCreate && <Loader />}
+      {errorCreate && <Message variant="danger">{errorCreate}</Message>}
 
       {loading ? (
         <Loader />

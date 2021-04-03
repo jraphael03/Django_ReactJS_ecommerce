@@ -13,6 +13,11 @@ import {
   PRODUCT_DELETE_REQUEST,
   PRODUCT_DELETE_SUCCESS,
   PRODUCT_DELETE_FAIL,
+
+  PRODUCT_CREATE_REQUEST,
+  PRODUCT_CREATE_SUCCESS,
+  PRODUCT_CREATE_FAIL,
+  PRODUCT_CREATE_RESET,
 } from "../constants/productConstants";
 
 
@@ -63,6 +68,28 @@ export const productDeleteReducer = ( state = { }, action ) => {
 
     case PRODUCT_DELETE_FAIL:
       return { loading: false, error: action.payload }; // when finished if nothing was found give an error
+
+    default:
+      return state; // If none of the above happen return back original state
+  }
+};
+
+
+
+export const productCreateReducer = (state = {}, action) => {
+  // state is an empty array of products
+  switch (action.type) {
+    case PRODUCT_CREATE_REQUEST:
+      return { loading: true }; // While loading product array spread state
+
+    case PRODUCT_CREATE_SUCCESS:
+      return { loading: false, success: true, product: action.payload };  // send product that was created
+
+    case PRODUCT_CREATE_FAIL:
+      return { loading: false, error: action.payload }; // when finished if nothing was found give an error
+
+    case PRODUCT_CREATE_RESET:
+      return { }
 
     default:
       return state; // If none of the above happen return back original state
