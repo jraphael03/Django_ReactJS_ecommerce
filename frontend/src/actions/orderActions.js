@@ -11,11 +11,19 @@ import {
   ORDER_PAY_REQUEST,
   ORDER_PAY_SUCCESS,
   ORDER_PAY_FAIL,
-  ORDER_PAY_RESET,
 
   ORDER_LIST_MY_REQUEST,
   ORDER_LIST_MY_SUCCESS,
   ORDER_LIST_MY_FAIL,
+
+  ORDER_LIST_REQUEST,
+  ORDER_LIST_SUCCESS,
+  ORDER_LIST_FAIL,
+
+  ORDER_DELIVER_REQUEST,
+  ORDER_DELIVER_SUCCESS,
+  ORDER_DELIVER_FAIL,
+  ORDER_DELIVER_RESET,
 } from "../constants/orderConstants";
 
 import { CART_CLEAR_ITEMS } from '../constants/cartConstants'
@@ -202,6 +210,93 @@ export const listMyOrders = () => async (dispatch, getState) => {
   } catch (error) {
     dispatch({
       type: ORDER_LIST_MY_FAIL,
+      payload:
+        error.response && error.response.data.detail // If we received an error message
+          ? error.response.data.detail // Give the error message, from detail which is from the backend
+          : error.message, // If not display generic message
+    });
+  }
+};
+
+
+export const listOrders = () => async (dispatch, getState) => {
+  // Take in order object that will gather the data and send the data to db
+  try {
+    // set ORDER_LIST_MY_REQUEST,
+    dispatch({
+      type: ORDER_LIST_REQUEST,
+    });
+
+    const {
+      userLogin: { userInfo }, //We want to get data about the profile we are logged in as, userInfo is the state
+    } = getState();
+
+    const config = {
+      headers: {
+        "content-type": "application/json",
+        Authorization: `Bearer ${userInfo.token}`, // Pass in the token from logged in user for authorization access
+      },
+    };
+
+    // make the put request,
+    const { data } = await axios.get(
+      // Want to destructure data right away
+      `/api/orders/`,
+      config
+    );
+
+    // and if it is successful dispatch payload to the reducer
+    dispatch({
+      type: ORDER_LIST_SUCCESS,
+      payload: data,
+    });
+  } catch (error) {
+    dispatch({
+      type: ORDER_LIST_FAIL,
+      payload:
+        error.response && error.response.data.detail // If we received an error message
+          ? error.response.data.detail // Give the error message, from detail which is from the backend
+          : error.message, // If not display generic message
+    });
+  }
+};
+
+
+export const deliverOrder = (order) => async (dispatch, getState) => {
+  // Take in order object that will gather the data and send the data to db
+  try {
+    // set ORDER_CREATE_REQUEST,
+    dispatch({
+      type: ORDER_DELIVER_REQUEST,
+    });
+
+    const {
+      userLogin: { userInfo }, //We want to get data about the profile we are logged in as, userInfo is the state
+    } = getState();
+
+    const config = {
+      headers: {
+        "content-type": "application/json",
+        Authorization: `Bearer ${userInfo.token}`, // Pass in the token from logged in user for authorization access
+      },
+    };
+
+    // make the put request,
+    const { data } = await axios.put(
+      // Want to destructure data right away
+      `/api/orders/${order._id}/deliver/`,
+      {},
+      config
+    );
+
+    // and if it is successful dispatch payload to the reducer
+    dispatch({
+      type: ORDER_DELIVER_SUCCESS,
+      payload: data,
+    });
+  } catch (error) {
+    dispatch({
+      type: ORDER_DELIVER_FAIL,
       payload:
         error.response && error.response.data.detail // If we received an error message
           ? error.response.data.detail // Give the error message, from detail which is from the backend

@@ -10,15 +10,22 @@ import {
  } from './reducers/productReducers'
 import { cartReducer } from './reducers/cartReducers'
 import { 
-    userLoginReducer, 
-    userRegisterReducer, 
-    userDetailsReducer, 
-    userUpdateProfileReducer, 
-    userListReducer, 
-    userDeleteReducer,
-    userUpdateReducer,
-  } from './reducers/userReducers'
-import { orderCreateReducer, orderDetailsReducer, orderPayReducer, orderListMyReducer } from './reducers/orderReducers'
+  userLoginReducer, 
+  userRegisterReducer, 
+  userDetailsReducer, 
+  userUpdateProfileReducer, 
+  userListReducer, 
+  userDeleteReducer,
+  userUpdateReducer,
+} from './reducers/userReducers'
+import { 
+  orderCreateReducer,
+  orderDetailsReducer,
+  orderPayReducer,
+  orderListMyReducer,
+  orderListReducer,
+  orderDeliverReducer,
+} from './reducers/orderReducers'
 
 const reducer = combineReducers({
   // Cart
@@ -41,6 +48,8 @@ const reducer = combineReducers({
   orderDetails: orderDetailsReducer,
   orderPay: orderPayReducer,
   orderListMy: orderListMyReducer,
+  orderList: orderListReducer,
+  orderDeliver: orderDeliverReducer,
 });
 
 // Pull the items we sent to localStorage (cartActions.js) to add to state
