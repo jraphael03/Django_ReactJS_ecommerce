@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from django.contrib.auth.models import User
 from rest_framework_simplejwt.tokens import RefreshToken
-from .models import Product, Order, OrderItem, ShippingAddress
+from .models import Product, Order, OrderItem, ShippingAddress, Review
 
 # Using to customize what we want returned from JSON webtoken on login
 class UserSerializer(serializers.ModelSerializer):
@@ -40,11 +40,23 @@ class UserSerializerWithToken(UserSerializer):
         token = RefreshToken.for_user(obj)
         return str(token.access_token)      # token needs to be str when returned, access token grants access to account Ex: updating
 
+# Used to get reviews
+class ReviewSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Review
+        fields = '__all__'      # Return all fields
+
 # Used when Getting items
 class ProductSerializer(serializers.ModelSerializer):
+    reviews = serializers.SerializerMethodField(read_only=True)     # nest our reviews using ReviewSerializer above
     class Meta:
         model = Product
         fields = '__all__'      # Return all fields
+
+    def get_reviews(self, obj):
+        reviews = obj.review_set.all()
+        serializer = ReviewSerializer(reviews, many=True)
+        return serializer.data      # return all of the reviews we pulled
 
 
 # 
