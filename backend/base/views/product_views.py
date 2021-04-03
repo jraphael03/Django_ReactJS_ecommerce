@@ -13,8 +13,14 @@ from rest_framework import status
 # GET PRODUCTS DB  [# http://127.0.0.1:8000/api/products/
 @api_view(['GET'])
 def getProducts(request):
-    # returns all products from DB
-    products = Product.objects.all()
+    # GET ITEM BY SEARCHBOX INPUT
+    query = request.query_params.get('keyword')
+    print('query:', query)
+    if query == None:
+        query = ''
+
+    # returns all products from DB, or specific query
+    products = Product.objects.filter(name__icontains=query)        # i means caseinsesitive
     serializer = ProductSerializer(products, many=True)     # Serializing the model, serializing products, and set to many meaning many objects        
     return Response(serializer.data)
 

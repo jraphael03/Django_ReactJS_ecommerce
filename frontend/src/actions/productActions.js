@@ -28,13 +28,13 @@ import {
 
 // Instead of making Products API call from HomeScreen we will do it in this file
 
-// GET PRODUCTS (HomeScreen.js)
-export const listProducts = () => async (dispatch) => {    // dispatch action to reducers, then update state
+// GET PRODUCTS (HomeScreen.js)   keyword for SearchBox
+export const listProducts = (keyword = '') => async (dispatch) => {    // dispatch action to reducers, then update state
     try{
       dispatch({ type: PRODUCT_LIST_REQUEST })
 
       // MAKE API CALL
-      const { data } = await axios.get("/api/products/")     // GRAB AND DESTRUCTURE DATA
+      const { data } = await axios.get(`/api/products${keyword}`)     // GRAB AND DESTRUCTURE DATA, if using SearchBox append keyword to the end
 
       dispatch({
         type: PRODUCT_LIST_SUCCESS,

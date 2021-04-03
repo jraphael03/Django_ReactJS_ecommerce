@@ -6,17 +6,19 @@ import Message from '../components/Message'
 import { useDispatch, useSelector } from 'react-redux'      // useSelector allows you to use certain parts of your state
 import { listProducts } from '../actions/productActions'
 
-function HomeScreen() {
+function HomeScreen({ history }) {
 
     const dispatch = useDispatch()
 
     const productList = useSelector(state => state.productList)
     const { error, loading, products } = productList;  // Destructure the productList which is found by going to store first, then follow into productReducers
  
+    let keyword = history.location.search // Add keyword to useEffect to refresh screen when called
+    console.log(keyword)
     useEffect(() => {
-        dispatch(listProducts())
+        dispatch(listProducts(keyword));
         
-    }, [dispatch])
+    }, [dispatch, keyword])
 
 
     return (
