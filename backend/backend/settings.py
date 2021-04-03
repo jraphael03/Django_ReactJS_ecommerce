@@ -1,3 +1,5 @@
+import os
+from datetime import timedelta
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -91,7 +93,9 @@ ROOT_URLCONF = 'backend.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [
+            os.path.join(BASE_DIR, 'frontend/build')
+        ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -158,7 +162,8 @@ STATIC_URL = '/static/'
 MEDIA_URL = '/images/'      # Where to render images at
 
 STATICFILES_DIRS = [        # Created so django knows about our static folder
-    BASE_DIR / 'static'     # communicate with BASE_DIR / 'static'     folder
+    BASE_DIR / 'static',     # communicate with BASE_DIR / 'static'     folder,
+    BASE_DIR / 'frontend/build/static'      # Look for static files in the frontend
 ]
 
 MEDIA_ROOT = 'static/images' # Any file that is uploaded from a Model, upload it here   static folder images folder

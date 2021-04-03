@@ -38,3 +38,37 @@ pip install djangorestframework-simplejwt       #JSON web token download for dja
 
 python manage.py createsuperuser
 
+
+* Connect React server with Django *        [Reason home port was left empty]
+Turn off both servers and close out terminals
+Inside of the home folder
+take frontend folder and push it into the backend folder
+
+inside terminal window
+cd backend 
+cd frontend
+npm run build       [ take React files and turn into static assets]
+
+Now inside of the build folder the entire project sits inside of the index.html file
+
+We need to point django to the build folder and index.html inside
+[ quick note when changes are made we will need to run, run build  in terminal]
+
+In backend settings.py import os and inside of TEMPLATES
+    'DIRS': [
+        os.path.join(BASE_DIR, 'frontend/build')        [Tells BASE_DIR to look inside of build and see index.html]
+    ],
+
+Now inside of backend urls import, import django.views.generic import TemplateView
+
+Create path inside of the urls file
+path('', TemplateView.as_view(template_name='index.html')),
+
+In settings.py STATICFILES_DIRS add another path
+BASE_DIR / 'frontend/build/static'      # Look for static files in the frontend
+
+
+
+
+
+
