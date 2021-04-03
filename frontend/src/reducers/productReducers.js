@@ -18,6 +18,11 @@ import {
   PRODUCT_CREATE_SUCCESS,
   PRODUCT_CREATE_FAIL,
   PRODUCT_CREATE_RESET,
+
+  PRODUCT_UPDATE_REQUEST,
+  PRODUCT_UPDATE_SUCCESS,
+  PRODUCT_UPDATE_FAIL,
+  PRODUCT_UPDATE_RESET,
 } from "../constants/productConstants";
 
 
@@ -95,3 +100,24 @@ export const productCreateReducer = (state = {}, action) => {
       return state; // If none of the above happen return back original state
   }
 };
+
+export const productUpdateReducer = (state = { product: {} }, action) => {
+  // state is an empty array of products
+  switch (action.type) {
+    case PRODUCT_UPDATE_REQUEST:
+      return { loading: true }; // While loading product array spread state
+
+    case PRODUCT_UPDATE_SUCCESS:
+      return { loading: false, success: true, product: action.payload }; // send product that was created
+
+    case PRODUCT_UPDATE_FAIL:
+      return { loading: false, error: action.payload }; // when finished if nothing was found give an error
+
+    case PRODUCT_UPDATE_RESET:
+      return { product: {} };
+
+    default:
+      return state; // If none of the above happen return back original state
+  }
+};
+

@@ -5,10 +5,10 @@ import { useDispatch, useSelector } from "react-redux";
 import Loader from "../components/Loader";
 import Message from "../components/Message";
 import FormContainer from "../components/FormContainer";
-import { listProductDetails } from "../actions/productActions";
+import { listProductDetails, updateProduct } from "../actions/productActions";
+import { PRODUCT_UPDATE_RESET } from '../constants/productConstants'
 
 function ProductEditScreen({ match, history }) {
-
   const productId = match.params.id;
 
   const [name, setName] = useState("");
@@ -21,16 +21,23 @@ function ProductEditScreen({ match, history }) {
 
   const dispatch = useDispatch();
 
-  const productDetails = useSelector(state => state.productDetails); // Grabbing userRegister from the state, (found in store.js)
+  const productDetails = useSelector((state) => state.productDetails); // Grabbing userRegister from the state, (found in store.js)
   const { error, loading, product } = productDetails; // Inside of userReducer we want to pull back the selected objects
+
+  const productUpdate = useSelector((state) => state.productUpdate); // Grabbing userRegister from the state, (found in store.js)
+  const { error: errorUpdate, loading: loadingUpdate, success: successUpdate } = productUpdate; // Inside of userReducer we want to pull back the selected objects
 
   useEffect(() => {
 
-      // Change to number to match other id or else it will create infinite loop
-      if (!product.name || product._id !== Number(productId)) {
-        // if user.name or user.id does not match userId(passed in from match) dispatch update
-        dispatch(listProductDetails(productId));
-      } else {
+    if(successUpdate){
+      dispatch({ type: PRODUCT_UPDATE_RESET })
+      history.push('/admin/productlist')
+    }else{
+    // Change to number to match other id or else it will create infinite loop
+    if (!product.name || product._id !== Number(productId)) {
+      // if user.name or user.id does not match userId(passed in from match) dispatch update
+      dispatch(listProductDetails(productId));
+    } else {
         setName(product.name);
         setPrice(product.price);
         setImage(product.image);
@@ -39,11 +46,21 @@ function ProductEditScreen({ match, history }) {
         setCountInStock(product.countInStock);
         setDescription(product.description);
       }
-    }, [ dispatch, product, productId, history ]);
+    }
+  }, [dispatch, product, productId, history, successUpdate]);
 
   const submitHandler = (e) => {
     e.preventDefault();
-    // Update product
+    dispatch(updateProduct({
+      _id: productId,
+      name, 
+      price,
+      image,
+      brand,
+      category,
+      countInStock,
+      description,      
+    }))
   };
 
   return (
@@ -52,6 +69,8 @@ function ProductEditScreen({ match, history }) {
 
       <FormContainer>
         <h1>Edit Product</h1>
+        {loadingUpdate && <Loader/>}
+        {errorUpdate && <Message variant="danger">{errorUpdate}</Message>}
 
         {loading ? (
           <Loader />

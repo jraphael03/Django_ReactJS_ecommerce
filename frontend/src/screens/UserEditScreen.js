@@ -8,7 +8,7 @@ import FormContainer from "../components/FormContainer";
 import { getUserDetails, updateUser } from "../actions/userActions";
 import { USER_UPDATE_RESET } from '../constants/userConstants'
 
-function EditUserScreen({ match, history }) {
+function UserEditScreen({ match, history }) {
   const userId = match.params.id;
 
   const [name, setName] = useState("");
@@ -21,16 +21,18 @@ function EditUserScreen({ match, history }) {
   const { error, loading, user } = userDetails; // Inside of userReducer we want to pull back the selected objects
 
   const userUpdate = useSelector((state) => state.userUpdate); // Grabbing userUpdate from the state, (found in store.js)
-  const { error: errorUpdate, loading: loadingUpdate, success: successUpdate } = userUpdate; // Inside of userUpdate we want to pull back the selected objects
+  const {
+    error: errorUpdate,
+    loading: loadingUpdate,
+    success: successUpdate,
+  } = userUpdate; // Inside of userUpdate we want to pull back the selected objects
 
   // If user is logged in don't let them go to login screen redirect instead
   useEffect(() => {
-
-    if(successUpdate){
-      dispatch({type: USER_UPDATE_RESET})
-      history.push('/admin/userlist')
-    }else{
-
+    if (successUpdate) {
+      dispatch({ type: USER_UPDATE_RESET });
+      history.push("/admin/userlist");
+    } else {
       // Change to number to match other id or else it will create infinite loop
       if (!user.name || user._id !== Number(userId)) {
         // if user.name or user.id does not match userId(passed in from match) dispatch update
@@ -45,7 +47,7 @@ function EditUserScreen({ match, history }) {
 
   const submitHandler = (e) => {
     e.preventDefault();
-    dispatch(updateUser({_id:user._id, name, email, isAdmin}))
+    dispatch(updateUser({ _id: user._id, name, email, isAdmin }));
   };
 
   return (
@@ -54,8 +56,8 @@ function EditUserScreen({ match, history }) {
 
       <FormContainer>
         <h1>Edit User</h1>
-        {loadingUpdate && <Loader/>}
-        {errorUpdate && <Message varinat='danger'>{errorUpdate}</Message>}
+        {loadingUpdate && <Loader />}
+        {errorUpdate && <Message varinat="danger">{errorUpdate}</Message>}
         {loading ? (
           <Loader />
         ) : error ? (
@@ -102,4 +104,4 @@ function EditUserScreen({ match, history }) {
   );
 }
 
-export default EditUserScreen;
+export default UserEditScreen;
