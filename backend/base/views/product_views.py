@@ -74,3 +74,17 @@ def deleteProduct(request, pk):
     product = Product.objects.get(_id=pk)
     product.delete()
     return Response('Product deleted')
+
+
+# UPLOAD AN IMAGE TO DB     # http://127.0.0.1:8000/api/upload/
+@api_view(['POST'])
+def uploadImage(request):
+    data = request.data
+
+    product_id = data[ 'product_id' ]
+    product = Product.objects.get(_id=product_id)   # where to set image
+
+    product.image = request.FILES.get('image')      # Send image back to frontend with get
+    product.save()
+
+    return Response('Image was uploaded')

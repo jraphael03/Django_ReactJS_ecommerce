@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import axios from 'axios'
 import { Link } from "react-router-dom";
 import { Form, Button, Row, Col } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
@@ -18,6 +19,7 @@ function ProductEditScreen({ match, history }) {
   const [category, setCategory] = useState("");
   const [countInStock, setCountInStock] = useState(0);
   const [description, setDescription] = useState("");
+  const [uploading, setUploading] = useState(false);
 
   const dispatch = useDispatch();
 
@@ -63,6 +65,33 @@ function ProductEditScreen({ match, history }) {
     }))
   };
 
+  const uploadFileHandler = async (e) => {
+    //console.log('File is uploading')
+    const file = e.target.files[0]
+    const formData = new FormData()
+
+    formData.append('image', file)              // Files and id we are sending to the db
+    formData.append('product_id', productId)
+
+    setUploading(true)
+
+    try{
+      const config = {
+        headers: {
+          'Content-Type':'mulitpart/form-data'  // Allows us to send image data with post req
+        }
+      }
+      // Axios request to send image, data, and config to give configuration
+      const {data} = await axios.post('/api/products/upload/', formData, config)
+
+      setImage(data)
+      setUploading(false)
+
+    }catch(error){
+      setUploading(false)
+    }
+  }
+
   return (
     <div>
       <Link to="/admin/productlist/">Go Back</Link>
@@ -106,6 +135,16 @@ function ProductEditScreen({ match, history }) {
                 value={image}
                 onChange={(e) => setImage(e.target.value)}
               ></Form.Control>
+
+              <Form.File
+                id='image-file'
+                label='Choose File'
+                custom
+                onChange={uploadFileHandler}
+              >
+              </Form.File>
+              {uploading && <Loader/>}
+
             </Form.Group>
 
             <Form.Group controlId="brand">
