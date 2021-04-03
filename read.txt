@@ -24,7 +24,7 @@ myenv/scripts/activate      (for windows)
 source myenv/bin/activate   (for mac)
 pip3 install django
 django-admin.py startproject backend
-cd backend
+cd backend  ( Make sure virutal enviornment is turned on )
 python3 manage.py runserver
 
 python3 manage.py startapp base
@@ -67,8 +67,11 @@ path('', TemplateView.as_view(template_name='index.html')),
 In settings.py STATICFILES_DIRS add another path
 BASE_DIR / 'frontend/build/static'      # Look for static files in the frontend
 
-
-
+To allow Django to change routes using react server we need to go into App.js and change BrowserRouter to a HashRouter
+import { HashRouter as Router, Route } from 'react-router-dom'
+react server url should now be http://127.0.0.1:8000/#/8
+ 
+run build, and django server should have a url like http://127.0.0.1:8000/#/
 
 
 
