@@ -38,7 +38,12 @@ export const productListReducer = (state = { products: [] }, action) => {
       return { loading: true, products: [] }; // While loading product array is still empty
 
     case PRODUCT_LIST_SUCCESS:
-      return { loading: false, products: action.payload }; // When finished loading, products is whatever data action was able to find
+      return {
+        loading: false,
+        products: action.payload.products,
+        page: action.payload.page,
+        pages: action.payload.pages,
+      }; // When finished loading, products is whatever data action was able to find, passing from backend, products, page, and pages
 
     case PRODUCT_LIST_FAIL:
       return { loading: false, error: action.payload }; // when finished if nothing was found give an error

@@ -11,7 +11,7 @@ function SearchBox() {
     const submitHandler = (e) => {
         e.preventDefault()
         if(keyword){
-            history.push(`/?keyword=${keyword}`)    // set keyword to keyword
+            history.push(`/?keyword=${keyword}&page=1`)    // set keyword to keyword, and page # for pagination (auto set to 1)
         }else{
             history.push(history.push(history.location.pathname))   // If search bar is empty send to current page
         }

@@ -3,6 +3,7 @@ from django.shortcuts import render
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from rest_framework.response import Response
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 from base.models import Product, Review
 from base.serializers import ProductSerializer
@@ -21,8 +22,25 @@ def getProducts(request):
 
     # returns all products from DB, or specific query
     products = Product.objects.filter(name__icontains=query)        # i means caseinsesitive
+
+    # Paginator
+    page = request.query_params.get('page')     # Page it should be on
+    paginator = Paginator(products, 5)      # Return products, and then number of products you want per quey set (How many product per page)
+
+    try:
+        products = paginator.page(page)
+    except PageNotAnInteger:
+        products = paginator.page(1)    # If nothing return first page
+    except EmptyPage:
+        products = paginator.page(paginator.num_pages)  # If user goes passed the amount of pages we have return final page
+
+    if page == None:
+        page = 1
+
+    page = int(page)
+
     serializer = ProductSerializer(products, many=True)     # Serializing the model, serializing products, and set to many meaning many objects        
-    return Response(serializer.data)
+    return Response({ 'products': serializer.data, 'page': page, 'pages': paginator.num_pages })
 
 # GET PRODUCT BY ID        [# http://127.0.0.1:8000/api/products/id/
 @api_view(['GET'])
