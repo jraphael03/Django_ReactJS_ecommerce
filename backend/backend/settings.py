@@ -31,6 +31,7 @@ INSTALLED_APPS = [
 
     'rest_framework',       # installed
     'corsheaders',          # installed
+    'storages',
 
     'base.apps.BaseConfig',
 
@@ -189,3 +190,12 @@ MEDIA_ROOT = 'static/images' # Any file that is uploaded from a Model, upload it
 
 # Cors header will allow any request only safe while developing
 CORS_ALLOW_ALL_ORIGINS = True
+
+AWS_QUERYSTRING_AUTH = False
+# Connect to aws s3
+DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+# USER ACCESS KEYS FOR THE BUCKET
+AWS_ACCESS_KEY_ID = 'AKIAWOLMCLZ4SGEZG2US'
+AWS_SECRET_ACCESS_KEY  = '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'
+# BUCKET NAME
+AWS_STORAGE_BUCKET_NAME = 'electroshop'

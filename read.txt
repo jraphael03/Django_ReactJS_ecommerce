@@ -40,7 +40,8 @@ pip install psycopg2-binary
 
 python manage.py createsuperuser
 
-
+pip install django-storages
+pip install boto3
 
 
 * Connect React server with Django *        [Reason home port was left empty]
@@ -101,3 +102,57 @@ python3 manage.py migrate
 (Live server updates live server and local server at the same time)
 
 python manage.py createsuperuser
+
+
+
+
+
+STORING IMAGES IN AWS S3 BUCKET
+got to aws and search for Iam 
+create a user and give all programmatic access 
+set permissions go to attach exisiting policies directly, look for s3, and click AmazonS3FullAccess
+finish creating user by pressing next
+USE ACCESS KEY AND SECRET KEY AT BOTTOM OF settings.py
+
+AWS_ACCESS_KEY_ID = 'AKIAWOLMCLZ4YRDHGYUD'
+AWS_SECRET_ACCESS_KEY =  '***************'
+
+NOW AT THE BOTTOM IMPORT THE BUCKET NAME
+AWS_STORAGE_BUCKET_NAME = 'electroshop'
+
+go to aws and search for s3
+create a bucket
+turn off blocking public access
+When bucket is created go into the bucket and go into permissions
+edit bucket policy and add this code (modify as needed), makes it a public bucket, people can see and grab info but they cannot upload
+{
+    "Version": "2008-10-17",
+    "Statement": [
+        {
+            "Sid": "AllowPublicRead",
+            "Effect": "Allow",
+            "Principal": {
+                "AWS": "*"
+            },
+            "Action": "s3:GetObject",
+            "Resource": "arn:aws:s3:::your-bucket-name/*"
+        }
+    ]
+}
+
+Now you can go into the bucket, select the photo and click on the url and see the photo and send to anyone
+
+Now to set up django to send the photos we upload to our bucket
+
+First install 
+pip install boto3
+pip install django-storages             (https://django-storages.readthedocs.io/en/latest/)
+
+Go into settings.py
+add 'storages' inside of INSTALLED_APPS
+
+at the bottom of settings.py add
+DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+
+(eliminate extra info when looking at image url)
+AWS_QUERYSTRING_AUTH = False
