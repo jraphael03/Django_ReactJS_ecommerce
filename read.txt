@@ -42,6 +42,11 @@ python manage.py createsuperuser
 
 pip install django-storages
 pip install boto3
+pip install whitenoise
+pip install django-environ
+
+
+
 
 
 * Connect React server with Django *        [Reason home port was left empty]
@@ -156,3 +161,69 @@ DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
 
 (eliminate extra info when looking at image url)
 AWS_QUERYSTRING_AUTH = False
+
+
+SETTING UP HEROKU
+Click new       create a new app
+
+open app will open your webpage and show you your link in the url
+
+in settings set up buildpacks
+
+(You can go to the settings for your app and set up enviornment variables, input the info you don't want being shared EX: db_pass pass )
+
+Heroku needs for python
+requirements.txt (any donwnloaded files like pillow)
+setup.py
+Pipfile
+
+pip install gunicorn  # connects us to our web: gunicorn myproject.wsgi
+
+Before pushing to live go to settings.py and set DEBUG to False
+When DEBUG is False we need to set ALLOWED_HOSTS and that is our url ['127.0.0.1', 'localhost']     server should run again
+In settings.py add static_root   STATIC_ROOT = BASE_DIR / 'staticfiles' 
+python manage.py collectstatic          # Places static files in staticfiles for deployment
+in base urls.py add,     urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+
+(any time you need to update staticfiles run     collect static)
+
+Now we need django whitenoise so it can serve up its own static files
+pip install whitenoise
+
+add whitenoise into middleware inside of settings.py    above all other middleware apart from Django’s SecurityMiddleware:
+'whitenoise.middleware.WhiteNoiseMiddleware',
+
+We should be able to run server again
+
+Now set DEBUG back to true, as it no longer matters
+
+at the bottom of settings.py use an if statement to turn DEBUG off when django is on Heroku
+if os.getcwd() == '/app':       # if current working directory is heroku set DEBUG to False
+    DEBUG = False
+
+inside of backend create a new file Procfile
+
+pip install gunicorn
+Inside of that file configure process type for dyno (want to connect it to wsgi.py)     Looking at backend then wsgi.py inside of backend
+web: gunicorn backend.wsgi --log-file-
+
+run pip freeze > requirements.txt inside of terminal and python will look at all donwloaded files and create a file with all requirements
+
+inside of backend create a new file runtime.txt
+
+inside that file let heroku know what version of python you are running (can use python --version)
+python-3.9.1
+
+You want django to add in url from heroku to django to allow host
+Go to heroku and open app, take the link and place it inside of settings.py   ALLOWED_HOSTS     [trim url Ex: 'electroshop-demo.herokuapp.com']
+
+Inside of the frontend folder, inside of .gitignore erase   build/   from the file because we want that to be pushed live
+
+Before pushing live let's hide our sensitive information
+pip install django-environ
+
+instructions on how to use environ  https://alicecampkin.medium.com/how-to-set-up-environment-variables-in-django-f3c4db78c55f
+
+After sensitive info is hidden push to github but from your backend folder so other files that are not needed are left out
+
+Deploy app (we will be using github)

@@ -15,4 +15,4 @@ urlpatterns = [
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)        # Set url you want to add, then which folder do you want to look into  (url, folder) both settings can be found in settings file
-urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)      # POINTS AT STATICFILES FILE AND STATIC_ROOT IN SETTINGS.PY

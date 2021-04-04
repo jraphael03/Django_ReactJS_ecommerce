@@ -2,6 +2,11 @@ import os
 from datetime import timedelta
 from pathlib import Path
 import psycopg2
+import environ
+
+# Initialise environment variables
+env = environ.Env()
+environ.Env.read_env()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -16,7 +21,7 @@ SECRET_KEY = 'dx*zpgl&ay!l5w1)hl6mays-1o1id-==xu2#*63(lef-p(s*sa'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost', 'electroshop-demo.herokuapp.com']
 
 
 # Application definition
@@ -79,7 +84,7 @@ SIMPLE_JWT = {
 
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',     # added for corsheaders   
-
+    'whitenoise.middleware.WhiteNoiseMiddleware',
 
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -122,9 +127,9 @@ WSGI_APPLICATION = 'backend.wsgi.application'
         # 'ENGINE': 'django.db.backends.sqlite3',
        # 'NAME': BASE_DIR / 'db.sqlite3',
         # 'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        # 'NAME': 'electroshop',
+        # 'NAME': 'dbname',
         # 'USER': 'postgres',
-        # 'PASSWORD': 'Opendoors744784',
+        # 'PASSWORD': 'pass',
         # 'HOST': 'localhost',
         # 'PORT': '5432',
 #     }
@@ -134,9 +139,9 @@ WSGI_APPLICATION = 'backend.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'electroshop',
-        'USER': 'justinraphael',
-        'PASSWORD': 'Opendoors744784',
+        'NAME': env('DATABASE_NAME'),
+        'USER': env('DATABASE_USER'),
+        'PASSWORD': env('DATABASE_PASS'),
         'HOST': 'electroshop-identifier.cauw3xeboyri.us-east-2.rds.amazonaws.com',
         'PORT': '5432',
     }
@@ -186,7 +191,9 @@ STATICFILES_DIRS = [        # Created so django knows about our static folder
     BASE_DIR / 'frontend/build/static'      # Look for static files in the frontend
 ]
 
-MEDIA_ROOT = 'static/images' # Any file that is uploaded from a Model, upload it here   static folder images folder
+MEDIA_ROOT = BASE_DIR / 'static/images' # Any file that is uploaded from a Model, upload it here   static folder images folder
+STATIC_ROOT = BASE_DIR / 'staticfiles'  # IN PRODUCTION DJANGO WILL LOOK FOR FILES IN HERE
+
 
 # Cors header will allow any request only safe while developing
 CORS_ALLOW_ALL_ORIGINS = True
@@ -195,7 +202,10 @@ AWS_QUERYSTRING_AUTH = False
 # Connect to aws s3
 DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
 # USER ACCESS KEYS FOR THE BUCKET
-AWS_ACCESS_KEY_ID = 'AKIAWOLMCLZ4SGEZG2US'
-AWS_SECRET_ACCESS_KEY  = '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'
+AWS_ACCESS_KEY_ID = env('ACCESS_KEY')
+AWS_SECRET_ACCESS_KEY  = env('SECRET_KEY')
 # BUCKET NAME
 AWS_STORAGE_BUCKET_NAME = 'electroshop'
+
+if os.getcwd() == '/app':       # if current working directory is heroku set DEBUG to False
+    DEBUG = False
