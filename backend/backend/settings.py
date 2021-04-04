@@ -1,6 +1,7 @@
 import os
 from datetime import timedelta
 from pathlib import Path
+import psycopg2
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -114,13 +115,31 @@ WSGI_APPLICATION = 'backend.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
 
+#   Connecting directly to postgresql
+# DATABASES = {
+#     'default': {
+        # 'ENGINE': 'django.db.backends.sqlite3',
+       # 'NAME': BASE_DIR / 'db.sqlite3',
+        # 'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        # 'NAME': 'electroshop',
+        # 'USER': 'postgres',
+        # 'PASSWORD': 'Opendoors744784',
+        # 'HOST': 'localhost',
+        # 'PORT': '5432',
+#     }
+# }
+
+# Connect to AWS
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'electroshop',
+        'USER': 'justinraphael',
+        'PASSWORD': 'Opendoors744784',
+        'HOST': 'electroshop-identifier.cauw3xeboyri.us-east-2.rds.amazonaws.com',
+        'PORT': '5432',
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/3.1/ref/settings/#auth-password-validators
